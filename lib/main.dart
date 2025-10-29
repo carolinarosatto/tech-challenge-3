@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'core/theme/theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -18,9 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: AppTheme.theme,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
@@ -61,6 +60,7 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            FilledButton(onPressed: () {}, child: Text("Confirmar")),
           ],
         ),
       ),
