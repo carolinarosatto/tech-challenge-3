@@ -25,17 +25,16 @@ class LoginPage extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: SingleChildScrollView(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Image.asset(
                   'assets/images/undraw_auth.png',
                   fit: BoxFit.contain,
                 ),
-                SizedBox(height: 24.0),
+                SizedBox(height: 16.0),
                 Text(
                   'Entrar',
-                  style: Theme.of(context).textTheme.headlineLarge,
+                  style: Theme.of(context).textTheme.headlineMedium,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 20.0),
@@ -50,11 +49,11 @@ class LoginPage extends StatelessWidget {
                 SizedBox(height: 14.0),
                 FilledButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, Routes.createAccount);
+                    Navigator.pushNamed(context, Routes.home);
                   },
                   child: Text('Entrar'),
                 ),
-                SizedBox(height: 36.0),
+                SizedBox(height: 24.0),
                 RichText(
                   textAlign: TextAlign.center,
                   text: TextSpan(
@@ -70,6 +69,7 @@ class LoginPage extends StatelessWidget {
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
                             //Fazer a navegação para tela de cadastro
+                            Navigator.pushNamed(context, Routes.createAccount);
                           },
                       ),
                     ],

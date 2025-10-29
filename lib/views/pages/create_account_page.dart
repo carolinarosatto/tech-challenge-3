@@ -34,7 +34,7 @@ class CreateAccountPage extends StatelessWidget {
             SizedBox(height: 24.0),
             Text(
               'Cadastrar',
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: Theme.of(context).textTheme.headlineMedium,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 20.0),
