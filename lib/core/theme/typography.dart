@@ -3,11 +3,6 @@ import 'package:flutter/material.dart';
 class AppTypography {
   static const String fontFamily = 'Inter';
 
-  // 🧠 Hierarquia de textos:
-  // - headline → títulos e seções
-  // - body → textos comuns e descrições
-  // - label → botões, tags, etc.
-
   static const TextStyle headlineLarge = TextStyle(
     fontFamily: fontFamily,
     fontWeight: FontWeight.w700, // Bold

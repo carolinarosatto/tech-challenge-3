@@ -23,6 +23,26 @@ class AppTheme {
         bodyMedium: AppTypography.bodyMedium,
         labelLarge: AppTypography.labelLarge,
       ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          minimumSize: Size(double.infinity, 48.0),
+          textStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.0),
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          minimumSize: Size(double.infinity, 48.0),
+          textStyle: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        ),
+      ),
+      inputDecorationTheme: InputDecorationThemeData(
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(16.0)),
+        ),
+      ),
     );
   }
 }
