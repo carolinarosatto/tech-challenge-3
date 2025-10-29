@@ -1,6 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:tech_challenge_3/views/pages/login_page.dart';
+import 'core/routes.dart';
 import 'core/theme/theme.dart';
 import 'firebase_options.dart';
 
@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,
-      home: LoginPage(),
+      initialRoute: Routes.login,
+      routes: Routes.getRoutes(),
     );
   }
 }
