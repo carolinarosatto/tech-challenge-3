@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/routes.dart';
 import 'core/theme/theme.dart';
 import 'firebase_options.dart';
@@ -19,6 +20,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      locale: Locale('pt', 'BR'),
+      supportedLocales: [const Locale('en', 'US'), const Locale('pt', 'BR')],
+      localizationsDelegates: [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.theme,

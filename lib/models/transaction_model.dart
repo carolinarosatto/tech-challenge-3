@@ -46,6 +46,7 @@ class TransactionModel {
 
   String get formattedAmount => FormatterUtils.formatAmount(amount);
   String get formattedCreatedAt => FormatterUtils.formatDate(createdAt);
+  String get formattedUpdatedAt => FormatterUtils.formatDate(updatedAt!);
 
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
     final type = TransactionTypeExtension.fromString(
