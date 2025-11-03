@@ -29,4 +29,12 @@ class AppColors {
   static const border500 = Color(0xFFa6a8c6);
   static const stateError = Color(0xFFb71c1c);
   static const stateSuccess = Color(0xFF0f6b52);
+  static const categoryFood = Color(0xFFe44a31);
+  static const categoryTransport = Color(0xFF4A90E2);
+  static const categoryHabitation = Color(0xFF4CAF50);
+  static const categoryLeisure = Color(0xFF7440e6);
+  static const categoryHealth = Color(0xFF26A69A);
+  static const categoryEducation = Color(0xFF2C5282);
+  static const categoryPets = Color(0xFFffb800);
+  static const categoryOther = Color(0xFFc4c7dd);
 }

@@ -1,43 +1,41 @@
-import 'package:tech_challenge_3/models/enums/transaction_direction.dart';
-
 enum TransactionType {
-  deposito,
-  saque,
-  investimento,
-  rendimento,
-  pagamento,
-  transferencia,
+  deposit,
+  withdrawal,
+  investment,
+  income,
+  payment,
+  transfer,
+}
+
+enum TransactionDirection {
+  income, // entrada
+  expense, // saída
 }
 
 extension TransactionTypeExtension on TransactionType {
   String get label {
     switch (this) {
-      case TransactionType.deposito:
+      case TransactionType.deposit:
         return 'Depósito';
-      case TransactionType.saque:
+      case TransactionType.withdrawal:
         return 'Saque';
-      case TransactionType.investimento:
+      case TransactionType.investment:
         return 'Investimento';
-      case TransactionType.rendimento:
+      case TransactionType.income:
         return 'Rendimento';
-      case TransactionType.pagamento:
+      case TransactionType.payment:
         return 'Pagamento';
-      case TransactionType.transferencia:
+      case TransactionType.transfer:
         return 'Transferência';
     }
   }
 
-  /// Define se é entrada ou saída de dinheiro
-  TransactionDirection get nature {
+  TransactionDirection get direction {
     switch (this) {
-      case TransactionType.deposito:
-      case TransactionType.rendimento:
+      case TransactionType.deposit:
+      case TransactionType.income:
         return TransactionDirection.income;
-
-      case TransactionType.saque:
-      case TransactionType.investimento:
-      case TransactionType.pagamento:
-      case TransactionType.transferencia:
+      default:
         return TransactionDirection.expense;
     }
   }
@@ -45,7 +43,7 @@ extension TransactionTypeExtension on TransactionType {
   static TransactionType fromString(String value) {
     return TransactionType.values.firstWhere(
       (e) => e.name == value,
-      orElse: () => TransactionType.saque,
+      orElse: () => TransactionType.payment,
     );
   }
 }

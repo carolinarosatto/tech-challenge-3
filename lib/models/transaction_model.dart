@@ -1,3 +1,5 @@
+import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
+
 import 'enums/transaction_categories.dart';
 import 'enums/transaction_type.dart';
 
@@ -6,10 +8,11 @@ class TransactionModel {
   final String userId;
   final TransactionCategory category;
   final TransactionType type;
-  final String? title;
-  final String? description;
+  final String title;
+  final String description;
   final double amount;
-  final DateTime date;
+  final DateTime createdAt;
+  final DateTime? updatedAt;
   final String? attachmentUrl;
 
   TransactionModel({
@@ -17,12 +20,14 @@ class TransactionModel {
     required this.userId,
     required this.category,
     required this.type,
-    this.title,
-    this.description,
+    String? title,
+    String? description,
     required this.amount,
-    required this.date,
+    required this.createdAt,
+    this.updatedAt,
     this.attachmentUrl,
-  });
+  }) : title = (title != null && title.isNotEmpty) ? title : type.label,
+       description = description ?? '';
 
   Map<String, dynamic> toMap() {
     return {
@@ -33,23 +38,32 @@ class TransactionModel {
       'title': title,
       'description': description,
       'amount': amount,
-      'date': date.toIso8601String(),
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt?.toIso8601String(),
       'attachmentUrl': attachmentUrl,
     };
   }
 
+  String get formattedAmount => FormatterUtils.formatAmount(amount);
+  String get formattedCreatedAt => FormatterUtils.formatDate(createdAt);
+
   factory TransactionModel.fromMap(Map<String, dynamic> map) {
+    final type = TransactionTypeExtension.fromString(
+      map['type'] ?? TransactionType.payment,
+    );
+
     return TransactionModel(
       id: map['id'] ?? '',
       userId: map['userId'] ?? '',
       category: TransactionCategoryExtension.fromString(
         map['category'] ?? 'outros',
       ),
-      type: TransactionTypeExtension.fromString(map['type'] ?? 'saque'),
+      type: type,
       title: map['title'],
       description: map['description'],
       amount: (map['amount'] as num?)?.toDouble() ?? 0.0,
-      date: DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
+      createdAt: DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(map['updatedAt'] ?? ''),
       attachmentUrl: map['attachmentUrl'],
     );
   }
