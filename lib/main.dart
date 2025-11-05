@@ -1,8 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
 import 'core/routes.dart';
 import 'core/theme/theme.dart';
+import 'core/providers/transactions_provider.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -19,19 +21,25 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      locale: Locale('pt', 'BR'),
-      supportedLocales: [const Locale('en', 'US'), const Locale('pt', 'BR')],
-      localizationsDelegates: [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TransactionsProvider()),
+        // TODO: add auth provider
       ],
-      title: 'Flutter Demo',
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.theme,
-      initialRoute: Routes.login,
-      routes: Routes.getRoutes(),
+      child: MaterialApp(
+        locale: const Locale('pt', 'BR'),
+        supportedLocales: const [Locale('en', 'US'), Locale('pt', 'BR')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        title: 'Flutter Demo',
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.theme,
+        initialRoute: Routes.login,
+        routes: Routes.getRoutes(),
+      ),
     );
   }
 }
