@@ -25,6 +25,7 @@ class TransactionsProvider extends ChangeNotifier {
       createdAt: DateTime.now().subtract(const Duration(days: 2)),
       title: 'Medicamentos',
       description: 'Compra de remédios na farmácia',
+      attachmentUrl: 'Teste',
     ),
     TransactionModel(
       id: '3',

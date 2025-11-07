@@ -43,6 +43,9 @@ class AppTheme {
           borderRadius: BorderRadius.all(Radius.circular(16.0)),
         ),
       ),
+      appBarTheme: AppBarTheme(
+        iconTheme: IconThemeData(color: AppColors.text100),
+      ),
     );
   }
 }

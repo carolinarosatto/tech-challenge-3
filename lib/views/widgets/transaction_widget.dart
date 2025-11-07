@@ -53,9 +53,19 @@ class TransactionWidget extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      transaction.title,
-                      style: Theme.of(context).textTheme.bodyLarge,
+                    Row(
+                      children: [
+                        Text(
+                          transaction.title,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                        if (transaction.attachmentUrl != null &&
+                            transaction.attachmentUrl!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Icon(Icons.attach_file_outlined, size: 18),
+                          ),
+                      ],
                     ),
 
                     SizedBox(height: 4),

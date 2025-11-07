@@ -48,6 +48,16 @@ class TransactionOptionsWidget extends StatelessWidget {
                 // _confirmDelete(context, transaction);
               },
             ),
+            if (transaction.attachmentUrl != null &&
+                transaction.attachmentUrl!.isNotEmpty)
+              ListTile(
+                leading: const Icon(Icons.attach_file_outlined),
+                title: const Text('Visualizar anexo'),
+                onTap: () {
+                  Navigator.pop(context);
+                  // Exibir ou baixar o anexo
+                },
+              ),
           ],
         ),
       ),
