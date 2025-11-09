@@ -13,8 +13,8 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [DashboardPage(), TransactionsPage()];
-  final List<String> _titles = ["Dashboard", "Transações"];
+  final List<Widget> _pages = const [DashboardPage(), TransactionsPage()];
+  final List<String> _titles = const ["Dashboard", "Transações"];
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         // mini: true,
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
         onPressed: () {
           Navigator.pushNamed(context, '/create_transaction');
         },

@@ -61,6 +61,25 @@ class TransactionsProvider extends ChangeNotifier {
 
   List<TransactionModel> get transactions => List.unmodifiable(_transactions);
 
+  Map<TransactionCategory, double> get totalsByCategory =>
+      _getTotalsByCategory();
+
+  Map<TransactionCategory, double> _getTotalsByCategory() {
+    final totals = <TransactionCategory, double>{};
+
+    for (final transaction in _transactions) {
+      if (transaction.type != TransactionType.payment) continue;
+
+      final amount = transaction.amount.abs();
+      totals.update(
+        transaction.category,
+        (value) => value + amount,
+        ifAbsent: () => amount,
+      );
+    }
+    return Map.unmodifiable(totals);
+  }
+
   void addTransaction(TransactionModel transaction) {
     _transactions.add(transaction);
     notifyListeners();
