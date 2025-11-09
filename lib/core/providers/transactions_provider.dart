@@ -80,6 +80,14 @@ class TransactionsProvider extends ChangeNotifier {
     return Map.unmodifiable(totals);
   }
 
+  double get totalIncome => _transactions
+      .where((transaction) => transaction.type == TransactionType.income)
+      .fold<double>(0, (sum, transaction) => sum + transaction.amount.abs());
+
+  double get totalOutcome => _transactions
+      .where((transaction) => transaction.type == TransactionType.payment)
+      .fold<double>(0, (sum, transaction) => sum + transaction.amount.abs());
+
   void addTransaction(TransactionModel transaction) {
     _transactions.add(transaction);
     notifyListeners();

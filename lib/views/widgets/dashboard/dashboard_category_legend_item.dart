@@ -1,4 +1,4 @@
-part of './withdrawals_by_category_chart.dart';
+part of 'outcome_by_category_chart.dart';
 
 class _CategoryLegendItem extends StatelessWidget {
   const _CategoryLegendItem({

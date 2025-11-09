@@ -46,7 +46,7 @@ class OutcomeByCategoryChart extends StatelessWidget {
               PieChart(
                 PieChartData(
                   sectionsSpace: 2,
-                  centerSpaceRadius: 70,
+                  centerSpaceRadius: 60,
                   pieTouchData: PieTouchData(enabled: false),
                   sections: totalsEntries.map((entry) {
                     return _buildSection(context, entry, totalAmount);
