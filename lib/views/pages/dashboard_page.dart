@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
-import 'package:tech_challenge_3/views/widgets/dashboard/withdrawals_by_category_chart.dart';
+import 'package:tech_challenge_3/views/widgets/dashboard/outcome_by_category_chart.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -35,7 +35,7 @@ class DashboardPage extends StatelessWidget {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: WithdrawalsByCategoryChart(
+          child: OutcomeByCategoryChart(
             totalsEntries: totalsEntries,
             totalAmount: totalAmount,
             hasData: hasData,

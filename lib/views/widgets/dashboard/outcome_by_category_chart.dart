@@ -6,8 +6,8 @@ import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
 import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
 part 'package:tech_challenge_3/views/widgets/dashboard/dashboard_category_legend_item.dart';
 
-class WithdrawalsByCategoryChart extends StatelessWidget {
-  const WithdrawalsByCategoryChart({
+class OutcomeByCategoryChart extends StatelessWidget {
+  const OutcomeByCategoryChart({
     required this.totalsEntries,
     required this.totalAmount,
     required this.hasData,
