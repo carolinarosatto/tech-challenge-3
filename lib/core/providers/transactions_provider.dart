@@ -1,63 +1,48 @@
+import 'dart:async';
 import 'package:flutter/foundation.dart';
+import 'package:tech_challenge_3/core/services/transaction_service.dart';
 
 import '../../models/enums/transaction_categories.dart';
 import '../../models/enums/transaction_type.dart';
 import '../../models/transaction_model.dart';
 
 class TransactionsProvider extends ChangeNotifier {
-  final List<TransactionModel> _transactions = [
-    TransactionModel(
-      id: '1',
-      userId: '2',
-      category: TransactionCategory.food,
-      type: TransactionType.payment,
-      amount: 45.50,
-      createdAt: DateTime.now().subtract(const Duration(days: 1)),
-      title: 'Almoço',
-      description: 'Almoço no restaurante perto do trabalho',
-    ),
-    TransactionModel(
-      id: '2',
-      userId: '2',
-      category: TransactionCategory.health,
-      type: TransactionType.payment,
-      amount: 120.00,
-      createdAt: DateTime.now().subtract(const Duration(days: 2)),
-      title: 'Medicamentos',
-      description: 'Compra de remédios na farmácia',
-      attachmentUrl: 'Teste',
-    ),
-    TransactionModel(
-      id: '3',
-      userId: '2',
-      category: TransactionCategory.leisure,
-      type: TransactionType.payment,
-      amount: 320.00,
-      createdAt: DateTime.now().subtract(const Duration(days: 5)),
-      title: 'Cinema',
-      description: 'Sessão de cinema com amigos',
-    ),
-    TransactionModel(
-      id: '4',
-      userId: '2',
-      category: TransactionCategory.other,
-      type: TransactionType.income,
-      amount: 5000.00,
-      createdAt: DateTime.now().subtract(const Duration(days: 10)),
-      title: 'Salário',
-      description: 'Recebimento mensal do salário',
-    ),
-    TransactionModel(
-      id: '5',
-      userId: '2',
-      category: TransactionCategory.transport,
-      type: TransactionType.payment,
-      amount: 75.25,
-      createdAt: DateTime.now().subtract(const Duration(hours: 12)),
-      title: 'Uber',
-      description: 'Corrida de Uber para o centro',
-    ),
-  ];
+  final TransactionService _service;
+  StreamSubscription? _subscription;
+  
+  bool _isLoading = true;
+  List<TransactionModel> _transactions = [];
+
+  TransactionsProvider({required String userId}) 
+      : _service = TransactionService(userId: userId) {
+    _init();
+  }
+
+  bool get isLoading => _isLoading;
+
+  void _init() {
+  
+    _subscription = _service.getTransactions().listen(
+      (items) {
+        _transactions = items;
+        _isLoading = false;
+        notifyListeners();
+      },
+      onError: (error) {
+        if (kDebugMode) {
+          print("Erro no stream de transações: $error");
+        }
+        _isLoading = false;
+        notifyListeners();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
 
   List<TransactionModel> get transactions => List.unmodifiable(_transactions);
 
@@ -68,7 +53,7 @@ class TransactionsProvider extends ChangeNotifier {
     final totals = <TransactionCategory, double>{};
 
     for (final transaction in _transactions) {
-      if (transaction.type != TransactionType.payment) continue;
+      if (transaction.type.direction != TransactionDirection.expense) continue;
 
       final amount = transaction.amount.abs();
       totals.update(
@@ -81,15 +66,18 @@ class TransactionsProvider extends ChangeNotifier {
   }
 
   double get totalIncome => _transactions
-      .where((transaction) => transaction.type == TransactionType.income)
-      .fold<double>(0, (sum, transaction) => sum + transaction.amount.abs());
+      .where((t) => t.type.direction == TransactionDirection.income)
+      .fold<double>(0, (sum, t) => sum + t.amount.abs());
 
   double get totalOutcome => _transactions
-      .where((transaction) => transaction.type == TransactionType.payment)
-      .fold<double>(0, (sum, transaction) => sum + transaction.amount.abs());
+      .where((t) => t.type.direction == TransactionDirection.expense)
+      .fold<double>(0, (sum, t) => sum + t.amount.abs());
 
   void addTransaction(TransactionModel transaction) {
-    _transactions.add(transaction);
-    notifyListeners();
+    _service.saveTransaction(transaction: transaction);
+  }
+
+  Future<void> deleteTransaction(String transactionId) async {
+    await _service.deleteTransaction(transactionId);
   }
 }
