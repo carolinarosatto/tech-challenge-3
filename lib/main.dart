@@ -23,8 +23,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => TransactionsProvider()),
-        // TODO: add auth provider
+        ChangeNotifierProvider(
+          create: (_) => TransactionsProvider(userId: 'user_123'), // AVISO: lembrar de tirar mock para quando tiver o Auth
+        ),
       ],
       child: MaterialApp(
         locale: const Locale('pt', 'BR'),

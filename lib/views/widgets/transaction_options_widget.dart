@@ -1,11 +1,59 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; 
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
+import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/views/pages/create_transaction_page.dart';
 
 class TransactionOptionsWidget extends StatelessWidget {
   final TransactionModel transaction;
 
   const TransactionOptionsWidget({super.key, required this.transaction});
+
+  void _confirmDelete(BuildContext context, TransactionsProvider provider) {
+    showDialog(
+      context: context,
+      builder: (ctx) {
+        return AlertDialog(
+          title: const Text('Excluir transação'),
+          content: Text('Tem certeza que deseja excluir "${transaction.title}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                provider.deleteTransaction(transaction.id); 
+                Navigator.of(ctx).pop(); 
+              },
+              child: const Text('Excluir', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _viewAttachment(BuildContext context) {
+    if (transaction.attachmentUrl == null) return;
+    
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.network(transaction.attachmentUrl!, fit: BoxFit.contain),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text("Fechar"),
+            )
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,25 +77,27 @@ class TransactionOptionsWidget extends StatelessWidget {
             Text(
               transaction.title,
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             ListTile(
               leading: const Icon(Icons.edit_outlined),
               title: const Text('Editar'),
               onTap: () {
-                Navigator.pop(context);
-                // Chame sua função de edição aqui
+                Navigator.pop(context); 
+                CreateTransactionPage.show(context, transaction: transaction);
               },
             ),
             ListTile(
-              leading: const Icon(Icons.delete_outline),
-              title: const Text('Excluir'),
+              leading: const Icon(Icons.delete_outline, color: Colors.red),
+              title: const Text('Excluir', style: TextStyle(color: Colors.red)),
               onTap: () {
+                final provider = context.read<TransactionsProvider>();
                 Navigator.pop(context);
-                // Confirmação antes de excluir
-                // _confirmDelete(context, transaction);
+                _confirmDelete(context, provider); 
               },
             ),
+
             if (transaction.attachmentUrl != null &&
                 transaction.attachmentUrl!.isNotEmpty)
               ListTile(
@@ -55,7 +105,7 @@ class TransactionOptionsWidget extends StatelessWidget {
                 title: const Text('Visualizar anexo'),
                 onTap: () {
                   Navigator.pop(context);
-                  // Exibir ou baixar o anexo
+                  _viewAttachment(context);
                 },
               ),
           ],
