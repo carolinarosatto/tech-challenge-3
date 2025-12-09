@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/outcome_by_category_chart.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/total_summary.dart';

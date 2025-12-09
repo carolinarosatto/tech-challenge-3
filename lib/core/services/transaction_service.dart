@@ -57,7 +57,6 @@ class TransactionService {
           .set(transactionToSave.toMap(), SetOptions(merge: true));
           
     } catch (e) {
-      print('Erro ao salvar transação: $e');
       rethrow;
     }
   }

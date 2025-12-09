@@ -295,7 +295,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<TransactionType>(
-                          value: _selectedType,
+                          initialValue: _selectedType,
                           decoration: const InputDecoration(labelText: 'Tipo', border: OutlineInputBorder()),
                           items: TransactionType.values.map((type) => DropdownMenuItem(value: type, child: Text(type.label))).toList(),
                           onChanged: (val) => setState(() => _selectedType = val!),
@@ -316,7 +316,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                   const SizedBox(height: 16),
           
                   DropdownButtonFormField<TransactionCategory>(
-                    value: _selectedCategory,
+                    initialValue: _selectedCategory,
                     decoration: const InputDecoration(labelText: 'Categoria', border: OutlineInputBorder()),
                     items: TransactionCategory.values.map((cat) => DropdownMenuItem(
                       value: cat,
@@ -355,7 +355,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
           ),
           if (_isLoading)
             Container(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               child: const Center(child: CircularProgressIndicator()),
             ),
         ],
