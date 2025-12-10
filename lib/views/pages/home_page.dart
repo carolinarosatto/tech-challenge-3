@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tech_challenge_3/core/services/auth_service.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
 import 'package:tech_challenge_3/views/pages/transactions_page.dart';
+
+import '../../core/routes.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -11,6 +14,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final _authService = AuthService();
   int _currentIndex = 0;
 
   final List<Widget> _pages = const [DashboardPage(), TransactionsPage()];
@@ -26,6 +30,15 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(color: AppColors.text100),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await _authService.logout();
+              Navigator.pushReplacementNamed(context, Routes.login);
+            },
+          ),
+        ],
         backgroundColor: AppColors.brand500,
         automaticallyImplyLeading: false,
       ),
