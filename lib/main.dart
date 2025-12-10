@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -12,6 +13,11 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  //Configuração para rodar em ambiente dev
+  await FirebaseAuth.instance.setSettings(
+    appVerificationDisabledForTesting: true,
+  );
+
   runApp(const MyApp());
 }
 
@@ -23,7 +29,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => TransactionsProvider(userId: 'user_123'), // AVISO: lembrar de tirar mock para quando tiver o Auth
+          create: (_) => TransactionsProvider(
+            userId: 'user_123',
+          ), // AVISO: lembrar de tirar mock para quando tiver o Auth
         ),
       ],
       child: MaterialApp(
