@@ -6,6 +6,11 @@ class TransactionsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(child: TransactionListWidget());
+    return const SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0),
+        child: TransactionListWidget(),
+      ),
+    );
   }
 }
