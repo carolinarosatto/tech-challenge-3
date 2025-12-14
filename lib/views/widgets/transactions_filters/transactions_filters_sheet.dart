@@ -5,6 +5,7 @@ import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
 import 'package:tech_challenge_3/models/enums/transaction_type.dart';
 import 'package:tech_challenge_3/models/transactions_filter.dart';
+import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_section.dart';
 
 class TransactionsFiltersSheet extends StatefulWidget {
   const TransactionsFiltersSheet({super.key});
@@ -81,22 +82,28 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8),
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(0),
                   physics: const BouncingScrollPhysics(),
                   child: Column(
+                    spacing: 16,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Direção', style: sectionTitleStyle),
-                      const SizedBox(height: 8),
-                      Wrap(
+                      FiltersSection<TransactionDirection>(
+                        title: 'Direção',
+                        options: TransactionDirection.values,
+                        titleStyle: sectionTitleStyle,
                         spacing: 8,
-                        children: TransactionDirection.values.map((direction) {
-                          final isSelected = _selectedDirection == direction;
-                          final label = direction == TransactionDirection.income
+                        runSpacing: 8,
+                        isSelected: (option) => _selectedDirection == option,
+                        onOptionSelected: (option, selected) {
+                          setState(() {
+                            _selectedDirection = selected ? option : null;
+                          });
+                        },
+                        chipBuilder: (context, option, isSelected, onSelected) {
+                          final label = option == TransactionDirection.income
                               ? 'Entradas'
                               : 'Saídas';
                           return ChoiceChip(
-                            selectedColor: AppColors.brand400,
                             label: Text(
                               label,
                               style: isSelected
@@ -105,91 +112,82 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
                             ),
                             selected: isSelected,
                             showCheckmark: false,
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedDirection = isSelected
-                                    ? null
-                                    : direction;
-                              });
-                            },
+                            onSelected: onSelected,
+                            selectedColor: AppColors.brand400,
                           );
-                        }).toList(),
+                        },
                       ),
-                      const SizedBox(height: 16),
-                      Text('Tipos de transação', style: sectionTitleStyle),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: TransactionType.values.map((type) {
-                          final isSelected = _selectedTypes.contains(type);
+                      FiltersSection<TransactionType>(
+                        title: 'Tipos de transação',
+                        options: TransactionType.values,
+                        titleStyle: sectionTitleStyle,
+                        isSelected: (type) => _selectedTypes.contains(type),
+                        onOptionSelected: (type, selected) {
+                          setState(() {
+                            if (selected) {
+                              _selectedTypes.add(type);
+                            } else {
+                              _selectedTypes.remove(type);
+                            }
+                          });
+                        },
+                        chipBuilder: (context, option, isSelected, onSelected) {
                           return FilterChip(
                             selectedColor: AppColors.brand400,
                             label: Text(
-                              type.label,
+                              option.label,
                               style: isSelected
                                   ? chipSelectedTextStyle
                                   : chipTextStyle,
                             ),
                             selected: isSelected,
                             showCheckmark: false,
-                            onSelected: (_) {
-                              setState(() {
-                                if (isSelected) {
-                                  _selectedTypes.remove(type);
-                                } else {
-                                  _selectedTypes.add(type);
-                                }
-                              });
-                            },
+                            onSelected: onSelected,
                           );
-                        }).toList(),
+                        },
                       ),
-                      const SizedBox(height: 16),
-                      Text('Categorias', style: sectionTitleStyle),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: TransactionCategory.values.map((category) {
-                          final isSelected = _selectedCategories.contains(
-                            category,
-                          );
-                          final Color selectedColor =
-                              category == TransactionCategory.other
-                              ? AppColors.border400
-                              : category.colors;
-
-                          return FilterChip(
-                            avatar: Icon(
-                              category.icon,
-                              size: 16,
-                              color: isSelected
-                                  ? AppColors.text100
-                                  : AppColors.text300,
-                            ),
-                            label: Text(
-                              category.label,
-                              style: isSelected
-                                  ? chipSelectedTextStyle
-                                  : chipTextStyle,
-                            ),
-                            selected: isSelected,
-                            selectedColor: selectedColor,
-                            showCheckmark: false,
-                            onSelected: (_) {
-                              setState(() {
-                                if (isSelected) {
-                                  _selectedCategories.remove(category);
-                                } else {
-                                  _selectedCategories.add(category);
-                                }
-                              });
+                      FiltersSection<TransactionCategory>(
+                        title: 'Categorias',
+                        options: TransactionCategory.values,
+                        titleStyle: sectionTitleStyle,
+                        isSelected: (category) =>
+                            _selectedCategories.contains(category),
+                        onOptionSelected: (category, selected) {
+                          setState(() {
+                            if (selected) {
+                              _selectedCategories.add(category);
+                            } else {
+                              _selectedCategories.remove(category);
+                            }
+                          });
+                        },
+                        chipBuilder:
+                            (context, category, isSelected, onSelected) {
+                              final Color selectedColor =
+                                  category == TransactionCategory.other
+                                  ? AppColors.border400
+                                  : category.colors;
+                              return FilterChip(
+                                avatar: Icon(
+                                  category.icon,
+                                  size: 16,
+                                  color: isSelected
+                                      ? AppColors.text100
+                                      : AppColors.text300,
+                                ),
+                                label: Text(
+                                  category.label,
+                                  style: isSelected
+                                      ? chipSelectedTextStyle
+                                      : chipTextStyle,
+                                ),
+                                selected: isSelected,
+                                selectedColor: selectedColor,
+                                showCheckmark: false,
+                                onSelected: onSelected,
+                              );
                             },
-                          );
-                        }).toList(),
                       ),
-                      const SizedBox(height: 16),
                     ],
                   ),
                 ),

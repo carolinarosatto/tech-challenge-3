@@ -4,8 +4,8 @@ import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
 import 'package:tech_challenge_3/views/pages/transactions_page.dart';
-import 'package:tech_challenge_3/views/widgets/filters_indicator.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_filters_sheet.dart';
+import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_indicator.dart';
+import 'package:tech_challenge_3/views/widgets/transactions_filters/transactions_filters_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
