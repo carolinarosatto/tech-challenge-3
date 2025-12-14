@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/views/pages/create_transaction_page.dart';
+import 'package:tech_challenge_3/views/widgets/empty_transactions.dart';
+import 'package:tech_challenge_3/views/widgets/filter_not_found.dart';
 import 'transaction_widget.dart';
 
 class TransactionListWidget extends StatelessWidget {
@@ -9,28 +11,26 @@ class TransactionListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-  
     final provider = context.watch<TransactionsProvider>();
+    final transactions = provider.filteredTransactions;
 
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
-    if (provider.transactions.isEmpty) {
-      return const Center(
-        child: Text(
-          'Nenhuma transação ainda.\nClique no + para adicionar.',
-          textAlign: TextAlign.center,
-          style: TextStyle(color: Colors.grey),
-        ),
-      );
+    if (transactions.isEmpty) {
+      if (provider.hasActiveFilters) {
+        return FilterNotFound(onClear: provider.clearFilters);
+      }
+
+      return const EmptyTransactions();
     }
 
     return ListView.builder(
       padding: const EdgeInsets.only(bottom: 80),
-      itemCount: provider.transactions.length,
+      itemCount: transactions.length,
       itemBuilder: (context, index) {
-        final transaction = provider.transactions[index];
+        final transaction = transactions[index];
 
         return GestureDetector(
           onTap: () {
