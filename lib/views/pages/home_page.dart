@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/services/auth_service.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
 import 'package:tech_challenge_3/views/pages/transactions_page.dart';
+import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_indicator.dart';
+import 'package:tech_challenge_3/views/widgets/transactions_filters/transactions_filters_sheet.dart';
 
 import '../../core/routes.dart';
 
@@ -41,6 +45,16 @@ class _HomePageState extends State<HomePage> {
         ],
         backgroundColor: AppColors.brand500,
         automaticallyImplyLeading: false,
+        actions: [
+          if (_currentIndex == 1)
+            IconButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/create_transaction');
+              },
+              icon: const Icon(Icons.add, color: AppColors.text100),
+              tooltip: 'Nova transação',
+            ),
+        ],
       ),
       body: IndexedStack(index: _currentIndex, children: _pages),
       bottomNavigationBar: NavigationBar(
@@ -61,15 +75,42 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        // mini: true,
+      floatingActionButton: _buildFloatingActionButton(context),
+      floatingActionButtonLocation: _currentIndex == 1
+          ? FloatingActionButtonLocation.endFloat
+          : FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget? _buildFloatingActionButton(BuildContext context) {
+    if (_currentIndex == 0) {
+      return FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () {
           Navigator.pushNamed(context, '/create_transaction');
         },
         child: const Icon(Icons.add),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-    );
+      );
+    }
+
+    if (_currentIndex == 1) {
+      return Consumer<TransactionsProvider>(
+        builder: (context, provider, _) {
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              FloatingActionButton(
+                shape: const CircleBorder(),
+                onPressed: () => TransactionsFiltersSheet.show(context),
+                child: const Icon(Icons.filter_list),
+              ),
+              FiltersIndicator(visible: provider.hasActiveFilters),
+            ],
+          );
+        },
+      );
+    }
+
+    return null;
   }
 }

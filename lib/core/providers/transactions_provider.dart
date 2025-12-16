@@ -5,6 +5,7 @@ import 'package:tech_challenge_3/core/services/transaction_service.dart';
 import '../../models/enums/transaction_categories.dart';
 import '../../models/enums/transaction_type.dart';
 import '../../models/transaction_model.dart';
+import '../../models/transactions_filter.dart';
 
 class TransactionsProvider extends ChangeNotifier {
   final TransactionService _service;
@@ -12,6 +13,7 @@ class TransactionsProvider extends ChangeNotifier {
   
   bool _isLoading = true;
   List<TransactionModel> _transactions = [];
+  TransactionsFilter _filters = TransactionsFilter.empty;
 
   TransactionsProvider({required String userId}) 
       : _service = TransactionService(userId: userId) {
@@ -19,6 +21,8 @@ class TransactionsProvider extends ChangeNotifier {
   }
 
   bool get isLoading => _isLoading;
+  TransactionsFilter get filters => _filters;
+  bool get hasActiveFilters => _filters.hasFilters;
 
   void _init() {
   
@@ -45,6 +49,8 @@ class TransactionsProvider extends ChangeNotifier {
   }
 
   List<TransactionModel> get transactions => List.unmodifiable(_transactions);
+  List<TransactionModel> get filteredTransactions =>
+      List.unmodifiable(_transactions.where(_matchesFilters));
 
   Map<TransactionCategory, double> get totalsByCategory =>
       _getTotalsByCategory();
@@ -79,5 +85,37 @@ class TransactionsProvider extends ChangeNotifier {
 
   Future<void> deleteTransaction(String transactionId) async {
     await _service.deleteTransaction(transactionId);
+  }
+
+  void updateFilters(TransactionsFilter filters) {
+    _filters = filters;
+    notifyListeners();
+  }
+
+  void clearFilters() {
+    if (!_filters.hasFilters) return;
+    _filters = TransactionsFilter.empty;
+    notifyListeners();
+  }
+
+  bool _matchesFilters(TransactionModel transaction) {
+    if (!_filters.hasFilters) return true;
+
+    if (_filters.direction != null &&
+        transaction.type.direction != _filters.direction) {
+      return false;
+    }
+
+    if (_filters.types.isNotEmpty &&
+        !_filters.types.contains(transaction.type)) {
+      return false;
+    }
+
+    if (_filters.categories.isNotEmpty &&
+        !_filters.categories.contains(transaction.category)) {
+      return false;
+    }
+
+    return true;
   }
 }
