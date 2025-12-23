@@ -41,7 +41,6 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
       _selectedCategories = {...filters.categories};
       _selectedDirection = filters.direction;
     } else {
-      // ⭐ Valores padrão se o provider não existir
       _selectedTypes = {};
       _selectedCategories = {};
       _selectedDirection = null;

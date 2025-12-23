@@ -11,10 +11,8 @@ class TransactionListWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Usa Consumer para ser mais específico sobre o que observar
     return Consumer<TransactionsProvider?>(
       builder: (context, provider, child) {
-        // Provider null = usuário não autenticado ou ainda inicializando
         if (provider == null) {
           return const Center(child: CircularProgressIndicator());
         }
