@@ -34,11 +34,18 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
   @override
   void initState() {
     super.initState();
-    final provider = context.read<TransactionsProvider>();
-    final filters = provider.filters;
-    _selectedTypes = {...filters.types};
-    _selectedCategories = {...filters.categories};
-    _selectedDirection = filters.direction;
+    final provider = context.read<TransactionsProvider?>();
+    if (provider != null) {
+      final filters = provider.filters;
+      _selectedTypes = {...filters.types};
+      _selectedCategories = {...filters.categories};
+      _selectedDirection = filters.direction;
+    } else {
+      // ⭐ Valores padrão se o provider não existir
+      _selectedTypes = {};
+      _selectedCategories = {};
+      _selectedDirection = null;
+    }
   }
 
   @override
@@ -217,18 +224,48 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
   }
 
   void _onClearFilters() {
-    context.read<TransactionsProvider>().clearFilters();
-    Navigator.of(context).pop();
+    final provider = context.read<TransactionsProvider?>();
+
+    if (provider != null) {
+      provider.clearFilters();
+      Navigator.of(context).pop();
+    } else {
+      Navigator.of(context).pop();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível limpar os filtros'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   void _onApplyFilters() {
-    final filters = TransactionsFilter(
-      direction: _selectedDirection,
-      types: Set<TransactionType>.from(_selectedTypes),
-      categories: Set<TransactionCategory>.from(_selectedCategories),
-    );
+    final provider = context.read<TransactionsProvider?>();
 
-    context.read<TransactionsProvider>().updateFilters(filters);
-    Navigator.of(context).pop();
+    if (provider != null) {
+      final filters = TransactionsFilter(
+        direction: _selectedDirection,
+        types: Set<TransactionType>.from(_selectedTypes),
+        categories: Set<TransactionCategory>.from(_selectedCategories),
+      );
+
+      provider.updateFilters(filters);
+      Navigator.of(context).pop();
+    } else {
+      Navigator.of(context).pop();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível aplicar os filtros'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

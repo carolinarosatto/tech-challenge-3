@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tech_challenge_3/core/services/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/core/providers/auth_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 
 import '../../core/routes.dart';
@@ -14,43 +15,52 @@ class CreateAccountPage extends StatefulWidget {
 }
 
 class _CreateAccountPageState extends State<CreateAccountPage> {
-  final _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
 
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
 
-  bool _loading = false;
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthProvider>().clearError();
+    });
+  }
 
   Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
-    setState(() => _loading = true);
 
-    final result = await _authService.register(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
+    final authProvider = context.read<AuthProvider>();
+
+    final success = await authProvider.register(
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
     );
 
-    setState(() => _loading = false);
+    if (!mounted) return;
 
-    if (result['success']) {
+    if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message']),
-          backgroundColor: AppColors.stateSuccess,
+        const SnackBar(
+          content: Text('Conta criada com sucesso!'),
+          backgroundColor: Colors.green,
           showCloseIcon: true,
         ),
       );
       Navigator.pushReplacementNamed(context, Routes.login);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(result['message']),
-          backgroundColor: AppColors.stateError,
-          showCloseIcon: true,
-        ),
-      );
+      final errorMessage = authProvider.errorMessage;
+      if (errorMessage != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: AppColors.stateError,
+            showCloseIcon: true,
+          ),
+        );
+      }
     }
   }
 
@@ -116,15 +126,19 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
                 validator: Validators.password,
               ),
               SizedBox(height: 36.0),
-              FilledButton(
-                onPressed: _loading ? null : _register,
-                child: _loading
-                    ? const SizedBox(
-                        height: 20,
-                        width: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text('Criar conta'),
+              Consumer<AuthProvider>(
+                builder: (context, authProvider, child) {
+                  return FilledButton(
+                    onPressed: authProvider.isLoading ? null : _register,
+                    child: authProvider.isLoading
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : Text('Criar conta'),
+                  );
+                },
               ),
             ],
           ),

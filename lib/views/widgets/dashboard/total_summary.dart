@@ -9,12 +9,13 @@ class TotalSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalIncome = context.select<TransactionsProvider, double>(
-      (provider) => provider.totalIncome,
+    final totalIncome = context.select<TransactionsProvider?, double>(
+      (provider) => provider?.totalIncome ?? 0.0,
     );
-    final totalOutcome = context.select<TransactionsProvider, double>(
-      (provider) => provider.totalOutcome,
+    final totalOutcome = context.select<TransactionsProvider?, double>(
+      (provider) => provider?.totalOutcome ?? 0.0,
     );
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
