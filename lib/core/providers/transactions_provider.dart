@@ -9,14 +9,15 @@ import '../../models/transactions_filter.dart';
 
 class TransactionsProvider extends ChangeNotifier {
   final TransactionService _service;
+  final String userId;
   StreamSubscription? _subscription;
-  
+
   bool _isLoading = true;
   List<TransactionModel> _transactions = [];
   TransactionsFilter _filters = TransactionsFilter.empty;
 
-  TransactionsProvider({required String userId}) 
-      : _service = TransactionService(userId: userId) {
+  TransactionsProvider({required this.userId})
+    : _service = TransactionService(userId: userId) {
     _init();
   }
 
@@ -25,7 +26,6 @@ class TransactionsProvider extends ChangeNotifier {
   bool get hasActiveFilters => _filters.hasFilters;
 
   void _init() {
-  
     _subscription = _service.getTransactions().listen(
       (items) {
         _transactions = items;

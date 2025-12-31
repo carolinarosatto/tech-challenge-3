@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/core/providers/auth_provider.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
@@ -20,6 +21,21 @@ class _HomePageState extends State<HomePage> {
   final List<Widget> _pages = const [DashboardPage(), TransactionsPage()];
   final List<String> _titles = const ["Dashboard", "Transações"];
 
+  Future<void> _handleLogout() async {
+    try {
+      await context.read<AuthProvider>().logout();
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Erro ao fazer logout: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +49,12 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: AppColors.brand500,
         automaticallyImplyLeading: false,
         actions: [
+          if (_currentIndex == 0)
+            IconButton(
+              onPressed: () => _handleLogout(),
+              icon: const Icon(Icons.logout, color: AppColors.text100),
+              tooltip: 'Logout',
+            ),
           if (_currentIndex == 1)
             IconButton(
               onPressed: () {
@@ -81,8 +103,11 @@ class _HomePageState extends State<HomePage> {
     }
 
     if (_currentIndex == 1) {
-      return Consumer<TransactionsProvider>(
+      return Consumer<TransactionsProvider?>(
         builder: (context, provider, _) {
+          if (provider == null) {
+            return const SizedBox.shrink();
+          }
           return Stack(
             clipBehavior: Clip.none,
             children: [
