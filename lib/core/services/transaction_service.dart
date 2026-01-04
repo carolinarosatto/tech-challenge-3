@@ -1,8 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 
@@ -33,13 +32,13 @@ class TransactionService {
 
   Future<void> saveTransaction({
     required TransactionModel transaction,
-    File? imageFile,
+    Uint8List? imageBytes,
   }) async {
     try {
       String? base64Image;
 
-      if (imageFile != null) {
-        base64Image = await _compressAndConvertToBase64(imageFile);
+      if (imageBytes != null) {
+        base64Image = await _compressAndConvertToBase64(imageBytes);
       }
 
       final transactionToSave = TransactionModel(
@@ -65,32 +64,19 @@ class TransactionService {
     }
   }
 
-  Future<String> _compressAndConvertToBase64(File file) async {
-    List<int>? compressedBytes;
+  Future<String> _compressAndConvertToBase64(Uint8List bytes) async {
+    final compressedBytes = await FlutterImageCompress.compressWithList(
+      bytes,
+      quality: 50,
+      minWidth: 800,
+      minHeight: 600,
+    );
 
-    if (kIsWeb) {
-      final bytes = await file.readAsBytes();
-      compressedBytes = await FlutterImageCompress.compressWithList(
-        bytes,
-        quality: 50,
-        minWidth: 800,
-        minHeight: 600,
-      );
-    } else {
-      compressedBytes = await FlutterImageCompress.compressWithFile(
-        file.absolute.path,
-        quality: 50,
-        minWidth: 800,
-        minHeight: 600,
-      );
-    }
-
-    if (compressedBytes == null) {
+    if (compressedBytes.isEmpty) {
       throw Exception('Falha ao comprimir imagem');
     }
 
     final base64String = base64Encode(compressedBytes);
-
     return 'data:image/jpeg;base64,$base64String';
   }
 

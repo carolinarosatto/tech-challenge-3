@@ -44,7 +44,6 @@ class TransactionOptionsWidget extends StatelessWidget {
     Widget imageWidget;
 
     if (transaction.attachmentBase64 != null && transaction.attachmentBase64!.isNotEmpty) {
-      // Exibir imagem do base64
       final base64String = transaction.attachmentBase64!.contains(',')
           ? transaction.attachmentBase64!.split(',')[1]
           : transaction.attachmentBase64!;
@@ -54,7 +53,6 @@ class TransactionOptionsWidget extends StatelessWidget {
         fit: BoxFit.contain,
       );
     } else if (transaction.attachmentUrl != null && transaction.attachmentUrl!.isNotEmpty) {
-      // Exibir imagem da URL (compatibilidade com anexos antigos)
       imageWidget = Image.network(
         transaction.attachmentUrl!,
         fit: BoxFit.contain,

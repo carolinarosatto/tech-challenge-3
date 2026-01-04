@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -46,7 +46,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
 
   String? _currentAttachmentUrl;
   String? _currentAttachmentBase64;
-  File? _pickedFile;
+  Uint8List? _pickedImageBytes;
   final ImagePicker _picker = ImagePicker();
 
   bool get _isEditing => widget.transaction != null;
@@ -78,15 +78,16 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
       imageQuality: 50,
     );
     if (picked != null) {
+      final bytes = await picked.readAsBytes();
       setState(() {
-        _pickedFile = File(picked.path);
+        _pickedImageBytes = bytes;
       });
     }
   }
 
   void _clearAttachment() {
     setState(() {
-      _pickedFile = null;
+      _pickedImageBytes = null;
       _currentAttachmentUrl = null;
       _currentAttachmentBase64 = null;
     });
@@ -121,7 +122,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   }
 
   Widget _buildAttachmentPreview() {
-    if (_pickedFile != null) {
+    if (_pickedImageBytes != null) {
       return Stack(
         alignment: Alignment.topRight,
         children: [
@@ -130,8 +131,11 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: FileImage(_pickedFile!),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(
+                _pickedImageBytes!,
                 fit: BoxFit.cover,
               ),
             ),
@@ -148,7 +152,6 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
     }
 
     if (_currentAttachmentBase64 != null && _currentAttachmentBase64!.isNotEmpty) {
-      // Remover o prefixo "data:image/jpeg;base64," se existir
       final base64String = _currentAttachmentBase64!.contains(',')
           ? _currentAttachmentBase64!.split(',')[1]
           : _currentAttachmentBase64!;
@@ -273,12 +276,12 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
         createdAt: _selectedDate,
         updatedAt: _isEditing ? DateTime.now() : null,
 
-        attachmentUrl: _pickedFile == null ? _currentAttachmentUrl : null,
+        attachmentUrl: _pickedImageBytes == null ? _currentAttachmentUrl : null,
       );
 
       await service.saveTransaction(
         transaction: transactionModel,
-        imageFile: _pickedFile,
+        imageBytes: _pickedImageBytes,
       );
 
       if (mounted) {
