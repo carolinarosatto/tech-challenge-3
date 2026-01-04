@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 
@@ -13,9 +14,9 @@ class TransactionService {
 
   TransactionService({required this.userId});
 
-  CollectionReference get _transactionsRef => 
+  CollectionReference get _transactionsRef =>
       _firestore.collection('users').doc(userId).collection('transactions');
-  
+
   Stream<List<TransactionModel>> getTransactions() {
     return _transactionsRef
         .orderBy('createdAt', descending: true)
@@ -23,8 +24,8 @@ class TransactionService {
         .map((snapshot) {
       return snapshot.docs.map((doc) {
         final data = doc.data() as Map<String, dynamic>;
-      
-        data['id'] = doc.id; 
+
+        data['id'] = doc.id;
         return TransactionModel.fromMap(data);
       }).toList();
     });
@@ -65,27 +66,36 @@ class TransactionService {
   }
 
   Future<String> _compressAndConvertToBase64(File file) async {
-    // Comprimir imagem para reduzir tamanho (evitar exceder 1MB do Firestore)
-    final compressedBytes = await FlutterImageCompress.compressWithFile(
-      file.absolute.path,
-      quality: 50, // Ajustar se necessário (30-70)
-      minWidth: 800,
-      minHeight: 600,
-    );
+    List<int>? compressedBytes;
+
+    if (kIsWeb) {
+      final bytes = await file.readAsBytes();
+      compressedBytes = await FlutterImageCompress.compressWithList(
+        bytes,
+        quality: 50,
+        minWidth: 800,
+        minHeight: 600,
+      );
+    } else {
+      compressedBytes = await FlutterImageCompress.compressWithFile(
+        file.absolute.path,
+        quality: 50,
+        minWidth: 800,
+        minHeight: 600,
+      );
+    }
 
     if (compressedBytes == null) {
       throw Exception('Falha ao comprimir imagem');
     }
 
-    // Converter bytes para base64
     final base64String = base64Encode(compressedBytes);
 
-    // Retornar no formato data URL para facilitar uso
     return 'data:image/jpeg;base64,$base64String';
   }
 
   Future<void> deleteTransaction(String transactionId) async {
     await _transactionsRef.doc(transactionId).delete();
-  
+
   }
 }
