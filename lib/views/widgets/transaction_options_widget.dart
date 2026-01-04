@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart'; 
+import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
@@ -16,7 +16,9 @@ class TransactionOptionsWidget extends StatelessWidget {
       builder: (ctx) {
         return AlertDialog(
           title: const Text('Excluir transação'),
-          content: Text('Tem certeza que deseja excluir "${transaction.title}"?'),
+          content: Text(
+            'Tem certeza que deseja excluir "${transaction.title}"?',
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -24,8 +26,8 @@ class TransactionOptionsWidget extends StatelessWidget {
             ),
             TextButton(
               onPressed: () {
-                provider.deleteTransaction(transaction.id); 
-                Navigator.of(ctx).pop(); 
+                provider.deleteTransaction(transaction.id);
+                Navigator.of(ctx).pop();
               },
               child: const Text('Excluir', style: TextStyle(color: Colors.red)),
             ),
@@ -37,7 +39,7 @@ class TransactionOptionsWidget extends StatelessWidget {
 
   void _viewAttachment(BuildContext context) {
     if (transaction.attachmentUrl == null) return;
-    
+
     showDialog(
       context: context,
       builder: (ctx) => Dialog(
@@ -48,7 +50,7 @@ class TransactionOptionsWidget extends StatelessWidget {
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: const Text("Fechar"),
-            )
+            ),
           ],
         ),
       ),
@@ -84,7 +86,7 @@ class TransactionOptionsWidget extends StatelessWidget {
               leading: const Icon(Icons.edit_outlined),
               title: const Text('Editar'),
               onTap: () {
-                Navigator.pop(context); 
+                Navigator.pop(context);
                 CreateTransactionPage.show(context, transaction: transaction);
               },
             ),
@@ -92,9 +94,19 @@ class TransactionOptionsWidget extends StatelessWidget {
               leading: const Icon(Icons.delete_outline, color: Colors.red),
               title: const Text('Excluir', style: TextStyle(color: Colors.red)),
               onTap: () {
-                final provider = context.read<TransactionsProvider>();
+                final provider = context.read<TransactionsProvider?>();
+                if (provider == null) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Erro: Provider não disponível'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
                 Navigator.pop(context);
-                _confirmDelete(context, provider); 
+                _confirmDelete(context, provider);
               },
             ),
 

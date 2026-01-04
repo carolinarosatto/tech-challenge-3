@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
+import 'package:tech_challenge_3/core/widgets/auth_guard.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/outcome_by_category_chart.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/total_summary.dart';
 
@@ -10,7 +11,10 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final provider = context.watch<TransactionsProvider>();
+    final provider = context.watch<TransactionsProvider?>();
+    if (provider == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
 
     if (provider.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -27,29 +31,31 @@ class DashboardPage extends StatelessWidget {
 
     final hasData = totalAmount > 0 && totalsEntries.isNotEmpty;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          const TotalSummary(), 
-          const SizedBox(height: 16),
-          Card(
-            color: AppColors.background100,
-            surfaceTintColor: AppColors.background100,
-            elevation: 0,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: OutcomeByCategoryChart(
-                totalsEntries: totalsEntries,
-                totalAmount: totalAmount,
-                hasData: hasData,
+    return AuthGuard(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            const TotalSummary(),
+            const SizedBox(height: 16),
+            Card(
+              color: AppColors.background100,
+              surfaceTintColor: AppColors.background100,
+              elevation: 0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: OutcomeByCategoryChart(
+                  totalsEntries: totalsEntries,
+                  totalAmount: totalAmount,
+                  hasData: hasData,
+                ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

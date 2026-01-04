@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tech_challenge_3/core/widgets/auth_guard.dart';
 import 'package:tech_challenge_3/views/widgets/transaction_list_widget.dart';
 
 class TransactionsPage extends StatelessWidget {
@@ -6,10 +7,12 @@ class TransactionsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(top: 8.0),
-        child: TransactionListWidget(),
+    return AuthGuard(
+      child: const SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(top: 8.0),
+          child: TransactionListWidget(),
+        ),
       ),
     );
   }

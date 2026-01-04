@@ -1,21 +1,26 @@
-import 'dart:io'; 
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tech_challenge_3/core/services/transaction_service.dart'; 
+import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/core/providers/auth_provider.dart';
+import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/core/services/transaction_service.dart';
 
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
 import 'package:tech_challenge_3/models/enums/transaction_type.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 
-
 class CreateTransactionPage extends StatefulWidget {
   final TransactionModel? transaction;
 
   const CreateTransactionPage({super.key, this.transaction});
 
-  static Future<void> show(BuildContext context, {TransactionModel? transaction}) async {
+  static Future<void> show(
+    BuildContext context, {
+    TransactionModel? transaction,
+  }) async {
     await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => CreateTransactionPage(transaction: transaction),
@@ -33,20 +38,17 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _amountController = TextEditingController();
-  
-  
+
   late TransactionType _selectedType;
   late TransactionCategory _selectedCategory;
   late DateTime _selectedDate;
-  
-  String? _currentAttachmentUrl; 
-  File? _pickedFile; 
+
+  String? _currentAttachmentUrl;
+  File? _pickedFile;
   final ImagePicker _picker = ImagePicker();
 
   bool get _isEditing => widget.transaction != null;
   bool _isLoading = false;
-  //  ATENÇÃO: remover mock e utilizar dado real do usuário quando possível.
-  final String _mockUserId = "user_123";
 
   @override
   void initState() {
@@ -59,8 +61,6 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
       _selectedType = t.type;
       _selectedCategory = t.category;
       _selectedDate = t.createdAt;
-      
-      
       _currentAttachmentUrl = t.attachmentUrl;
     } else {
       _selectedType = TransactionType.payment;
@@ -70,11 +70,13 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? picked = await _picker.pickImage(source: source, imageQuality: 50); 
+    final XFile? picked = await _picker.pickImage(
+      source: source,
+      imageQuality: 50,
+    );
     if (picked != null) {
       setState(() {
         _pickedFile = File(picked.path);
-        
       });
     }
   }
@@ -115,7 +117,6 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   }
 
   Widget _buildAttachmentPreview() {
-    
     if (_pickedFile != null) {
       return Stack(
         alignment: Alignment.topRight,
@@ -137,11 +138,11 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
               backgroundColor: Colors.white,
               child: Icon(Icons.close, color: Colors.red),
             ),
-          )
+          ),
         ],
       );
     }
-    
+
     if (_currentAttachmentUrl != null && _currentAttachmentUrl!.isNotEmpty) {
       return Stack(
         alignment: Alignment.topRight,
@@ -153,7 +154,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: Colors.grey.shade300),
               image: DecorationImage(
-                image: NetworkImage(_currentAttachmentUrl!), 
+                image: NetworkImage(_currentAttachmentUrl!),
                 fit: BoxFit.cover,
               ),
             ),
@@ -164,7 +165,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
               backgroundColor: Colors.white,
               child: Icon(Icons.close, color: Colors.red),
             ),
-          )
+          ),
         ],
       );
     }
@@ -172,12 +173,15 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
     return InkWell(
       onTap: _showImageSourceModal,
       child: Container(
-        height: 150, 
+        height: 150,
         width: double.infinity,
         decoration: BoxDecoration(
           color: Colors.grey.shade100,
           borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.grey.shade400, style: BorderStyle.solid),
+          border: Border.all(
+            color: Colors.grey.shade400,
+            style: BorderStyle.solid,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -195,21 +199,33 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   }
 
   Future<void> _onSubmit() async {
-    
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    setState(() => _isLoading = true); 
+    final authProvider = context.read<AuthProvider>();
+    final transactionsProvider = context.read<TransactionsProvider?>();
+    final userId = authProvider.user?.uid;
+
+    if (userId == null) {
+      _showError('Erro: Usuário não autenticado');
+      return;
+    }
+
+    if (transactionsProvider == null) {
+      _showError('Erro: Provider de transações não disponível');
+      return;
+    }
+
+    setState(() => _isLoading = true);
 
     try {
-      final double amount = double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
-      
-      
-      final service = TransactionService(userId: _mockUserId);
+      final double amount =
+          double.tryParse(_amountController.text.replaceAll(',', '.')) ?? 0.0;
 
-      
+      final service = TransactionService(userId: userId);
+
       final transactionModel = TransactionModel(
-        id: _isEditing ? widget.transaction!.id : '', 
-        userId: _mockUserId,
+        id: _isEditing ? widget.transaction!.id : '',
+        userId: userId,
         category: _selectedCategory,
         type: _selectedType,
         title: _titleController.text,
@@ -217,31 +233,43 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
         amount: amount,
         createdAt: _selectedDate,
         updatedAt: _isEditing ? DateTime.now() : null,
-        
-        
-        attachmentUrl: _pickedFile == null ? _currentAttachmentUrl : null, 
+
+        attachmentUrl: _pickedFile == null ? _currentAttachmentUrl : null,
       );
 
-      
       await service.saveTransaction(
         transaction: transactionModel,
-        imageFile: _pickedFile, 
+        imageFile: _pickedFile,
       );
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Transação salva com sucesso!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Transação salva com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
         );
-        Navigator.of(context).pop(); 
+        Navigator.of(context).pop();
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Erro ao salvar: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Erro ao salvar: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
-      if (mounted) setState(() => _isLoading = false); 
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
+
+  void _showError(String message) {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message), backgroundColor: Colors.red),
+      );
     }
   }
 
@@ -264,7 +292,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
         title: Text(
           _isEditing ? "Editar Transação" : "Nova Transação",
           style: TextStyle(color: AppColors.text100),
-          ),
+        ),
         backgroundColor: AppColors.brand500,
       ),
       body: Stack(
@@ -278,15 +306,26 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                 children: [
                   TextFormField(
                     controller: _titleController,
-                    decoration: const InputDecoration(labelText: 'Título *', border: OutlineInputBorder()),
-                    validator: (value) => value == null || value.isEmpty ? 'Informe um título' : null,
+                    decoration: const InputDecoration(
+                      labelText: 'Título *',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value == null || value.isEmpty
+                        ? 'Informe um título'
+                        : null,
                   ),
                   const SizedBox(height: 16),
-                  
+
                   TextFormField(
                     controller: _amountController,
-                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                    decoration: const InputDecoration(labelText: 'Valor (R\$) *', prefixText: 'R\$ ', border: OutlineInputBorder()),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
+                    decoration: const InputDecoration(
+                      labelText: 'Valor (R\$) *',
+                      prefixText: 'R\$ ',
+                      border: OutlineInputBorder(),
+                    ),
                     validator: (val) {
                       if (val == null || val.isEmpty) {
                         return 'Informe um valor';
@@ -302,14 +341,24 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                     },
                   ),
                   const SizedBox(height: 16),
-          
+
                   Row(
                     children: [
                       Expanded(
                         child: DropdownButtonFormField<TransactionType>(
                           initialValue: _selectedType,
-                          decoration: const InputDecoration(labelText: 'Tipo', border: OutlineInputBorder()),
-                          items: TransactionType.values.map((type) => DropdownMenuItem(value: type, child: Text(type.label))).toList(),
+                          decoration: const InputDecoration(
+                            labelText: 'Tipo',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: TransactionType.values
+                              .map(
+                                (type) => DropdownMenuItem(
+                                  value: type,
+                                  child: Text(type.label),
+                                ),
+                              )
+                              .toList(),
                           onChanged: (val) => setState(() {
                             if(val == TransactionType.deposit) {
                               _selectedCategory = TransactionCategory.deposit;
@@ -325,15 +374,19 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                         child: InkWell(
                           onTap: _pickDate,
                           child: InputDecorator(
-                            decoration: const InputDecoration(labelText: 'Data', border: OutlineInputBorder()),
-                            child: Text(DateFormat('dd/MM/yyyy').format(_selectedDate)),
+                            decoration: const InputDecoration(
+                              labelText: 'Data',
+                              border: OutlineInputBorder(),
+                            ),
+                            child: Text(
+                              DateFormat('dd/MM/yyyy').format(_selectedDate),
+                            ),
                           ),
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 16),
-
                   if (_selectedType != TransactionType.deposit) ...[
                     DropdownButtonFormField<TransactionCategory>(
                       initialValue: _selectedCategory,
@@ -342,35 +395,41 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                         border: OutlineInputBorder(),
                       ),
                       items: TransactionCategory.values
-                          .where((cat) => cat != TransactionCategory.deposit)
-                          .map((cat) => DropdownMenuItem(
-                                value: cat,
-                                child: Row(
-                                  children: [
-                                    Icon(cat.icon, color: cat.colors, size: 20),
-                                    const SizedBox(width: 8),
-                                    Text(cat.label),
-                                  ],
-                                ),
-                              ))
+                          .map(
+                            (cat) => DropdownMenuItem(
+                              value: cat,
+                              child: Row(
+                                children: [
+                                  Icon(cat.icon, color: cat.colors, size: 20),
+                                  const SizedBox(width: 8),
+                                  Text(cat.label),
+                                ],
+                              ),
+                            ),
+                          )
                           .toList(),
-                      onChanged: (val) => setState(() => _selectedCategory = val!),
+                      onChanged: (val) =>
+                          setState(() => _selectedCategory = val!),
                     ),
                     const SizedBox(height: 16),
-                  ],
-          
+                  ],  
                   TextFormField(
                     controller: _descriptionController,
                     maxLines: 3,
-                    decoration: const InputDecoration(labelText: 'Descrição', border: OutlineInputBorder()),
+                    decoration: const InputDecoration(
+                      labelText: 'Descrição',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                   const SizedBox(height: 24),
-          
-                  
-                  const Text("Anexo / Comprovante", style: TextStyle(fontWeight: FontWeight.bold)),
+
+                  const Text(
+                    "Anexo / Comprovante",
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 8),
                   _buildAttachmentPreview(),
-          
+
                   const SizedBox(height: 32),
                   ElevatedButton(
                     onPressed: _isLoading ? null : _onSubmit,
@@ -378,9 +437,12 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                       backgroundColor: AppColors.brand500,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
-                    child: _isLoading 
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(_isEditing ? 'Atualizar' : 'Criar', style: TextStyle(color: AppColors.text100)),
+                    child: _isLoading
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : Text(
+                            _isEditing ? 'Atualizar' : 'Criar',
+                            style: TextStyle(color: AppColors.text100),
+                          ),
                   ),
                 ],
               ),
@@ -394,5 +456,13 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _amountController.dispose();
+    super.dispose();
   }
 }
