@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 
 class TransactionService {
@@ -33,10 +35,10 @@ class TransactionService {
     File? imageFile,
   }) async {
     try {
-      String? downloadUrl = transaction.attachmentUrl;
+      String? base64Image;
 
       if (imageFile != null) {
-        downloadUrl = await _uploadImage(imageFile, transaction.id);
+        base64Image = await _compressAndConvertToBase64(imageFile);
       }
 
       final transactionToSave = TransactionModel(
@@ -49,27 +51,37 @@ class TransactionService {
         amount: transaction.amount,
         createdAt: transaction.createdAt,
         updatedAt: DateTime.now(),
-        attachmentUrl: downloadUrl,
+        attachmentUrl: transaction.attachmentUrl,
+        attachmentBase64: base64Image ?? transaction.attachmentBase64,
       );
 
       await _transactionsRef
           .doc(transactionToSave.id)
           .set(transactionToSave.toMap(), SetOptions(merge: true));
-          
+
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<String> _uploadImage(File file, String transactionId) async {
-  
-    final String fileName = '${transactionId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final Reference ref = _storage.ref().child('uploads/$userId/$fileName');
+  Future<String> _compressAndConvertToBase64(File file) async {
+    // Comprimir imagem para reduzir tamanho (evitar exceder 1MB do Firestore)
+    final compressedBytes = await FlutterImageCompress.compressWithFile(
+      file.absolute.path,
+      quality: 50, // Ajustar se necessário (30-70)
+      minWidth: 800,
+      minHeight: 600,
+    );
 
-    final UploadTask uploadTask = ref.putFile(file);
-    final TaskSnapshot snapshot = await uploadTask;
-    
-    return await snapshot.ref.getDownloadURL();
+    if (compressedBytes == null) {
+      throw Exception('Falha ao comprimir imagem');
+    }
+
+    // Converter bytes para base64
+    final base64String = base64Encode(compressedBytes);
+
+    // Retornar no formato data URL para facilitar uso
+    return 'data:image/jpeg;base64,$base64String';
   }
 
   Future<void> deleteTransaction(String transactionId) async {

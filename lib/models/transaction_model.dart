@@ -14,6 +14,7 @@ class TransactionModel {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final String? attachmentUrl;
+  final String? attachmentBase64;
 
   TransactionModel({
     required this.id,
@@ -26,6 +27,7 @@ class TransactionModel {
     required this.createdAt,
     this.updatedAt,
     this.attachmentUrl,
+    this.attachmentBase64,
   }) : title = (title != null && title.isNotEmpty) ? title : type.label,
        description = description ?? '';
 
@@ -41,6 +43,7 @@ class TransactionModel {
       'createdAt': createdAt.toIso8601String(),
       'updatedAt': updatedAt?.toIso8601String(),
       'attachmentUrl': attachmentUrl,
+      'attachmentBase64': attachmentBase64,
     };
   }
 
@@ -66,6 +69,7 @@ class TransactionModel {
       createdAt: DateTime.tryParse(map['date'] ?? '') ?? DateTime.now(),
       updatedAt: DateTime.tryParse(map['updatedAt'] ?? ''),
       attachmentUrl: map['attachmentUrl'],
+      attachmentBase64: map['attachmentBase64'],
     );
   }
 }

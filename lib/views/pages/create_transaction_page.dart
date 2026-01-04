@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -44,6 +45,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   late DateTime _selectedDate;
 
   String? _currentAttachmentUrl;
+  String? _currentAttachmentBase64;
   File? _pickedFile;
   final ImagePicker _picker = ImagePicker();
 
@@ -62,6 +64,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
       _selectedCategory = t.category;
       _selectedDate = t.createdAt;
       _currentAttachmentUrl = t.attachmentUrl;
+      _currentAttachmentBase64 = t.attachmentBase64;
     } else {
       _selectedType = TransactionType.payment;
       _selectedCategory = TransactionCategory.other;
@@ -85,6 +88,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
     setState(() {
       _pickedFile = null;
       _currentAttachmentUrl = null;
+      _currentAttachmentBase64 = null;
     });
   }
 
@@ -128,6 +132,41 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
               borderRadius: BorderRadius.circular(8),
               image: DecorationImage(
                 image: FileImage(_pickedFile!),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: _clearAttachment,
+            icon: const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.close, color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_currentAttachmentBase64 != null && _currentAttachmentBase64!.isNotEmpty) {
+      // Remover o prefixo "data:image/jpeg;base64," se existir
+      final base64String = _currentAttachmentBase64!.contains(',')
+          ? _currentAttachmentBase64!.split(',')[1]
+          : _currentAttachmentBase64!;
+
+      return Stack(
+        alignment: Alignment.topRight,
+        children: [
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(
+                base64Decode(base64String),
                 fit: BoxFit.cover,
               ),
             ),
