@@ -9,6 +9,7 @@ enum TransactionCategory {
   health,
   education,
   pets,
+  deposit,
   other,
 }
 
@@ -31,6 +32,8 @@ extension TransactionCategoryExtension on TransactionCategory {
         return 'Pets';
       case TransactionCategory.other:
         return 'Outros';
+      case TransactionCategory.deposit:
+        return 'Depósito';
     }
   }
 
@@ -52,6 +55,8 @@ extension TransactionCategoryExtension on TransactionCategory {
         return Icons.pets_outlined;
       case TransactionCategory.other:
         return Icons.receipt_outlined;
+      case TransactionCategory.deposit:
+        return Icons.attach_money_sharp;
     }
   }
 
@@ -73,6 +78,8 @@ extension TransactionCategoryExtension on TransactionCategory {
         return AppColors.categoryPets;
       case TransactionCategory.other:
         return AppColors.categoryOther;
+      case TransactionCategory.deposit:
+        return AppColors.stateSuccess;
     }
   }
 

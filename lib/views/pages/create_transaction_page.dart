@@ -368,8 +368,19 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                       prefixText: 'R\$ ',
                       border: OutlineInputBorder(),
                     ),
-                    validator: (val) =>
-                        val == null || val.isEmpty ? 'Obrigatório' : null,
+                    validator: (val) {
+                      if (val == null || val.isEmpty) {
+                        return 'Informe um valor';
+                      }
+                      final value = double.tryParse(val.replaceAll(',', '.'));
+                      if (value == null) {
+                        return 'Valor inválido';
+                      }
+                      if (value < 0) {
+                        return 'O valor deve ser positivo';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
 
@@ -390,8 +401,14 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                                 ),
                               )
                               .toList(),
-                          onChanged: (val) =>
-                              setState(() => _selectedType = val!),
+                          onChanged: (val) => setState(() {
+                            if(val == TransactionType.deposit) {
+                              _selectedCategory = TransactionCategory.deposit;
+                            } else {
+                              _selectedCategory = TransactionCategory.other;
+                            }
+                            _selectedType = val!;
+                          }),
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -412,32 +429,32 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-
-                  DropdownButtonFormField<TransactionCategory>(
-                    initialValue: _selectedCategory,
-                    decoration: const InputDecoration(
-                      labelText: 'Categoria',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: TransactionCategory.values
-                        .map(
-                          (cat) => DropdownMenuItem(
-                            value: cat,
-                            child: Row(
-                              children: [
-                                Icon(cat.icon, color: cat.colors, size: 20),
-                                const SizedBox(width: 8),
-                                Text(cat.label),
-                              ],
+                  if (_selectedType != TransactionType.deposit) ...[
+                    DropdownButtonFormField<TransactionCategory>(
+                      initialValue: _selectedCategory,
+                      decoration: const InputDecoration(
+                        labelText: 'Categoria',
+                        border: OutlineInputBorder(),
+                      ),
+                      items: TransactionCategory.values
+                          .map(
+                            (cat) => DropdownMenuItem(
+                              value: cat,
+                              child: Row(
+                                children: [
+                                  Icon(cat.icon, color: cat.colors, size: 20),
+                                  const SizedBox(width: 8),
+                                  Text(cat.label),
+                                ],
+                              ),
                             ),
-                          ),
-                        )
-                        .toList(),
-                    onChanged: (val) =>
-                        setState(() => _selectedCategory = val!),
-                  ),
-                  const SizedBox(height: 16),
-
+                          )
+                          .toList(),
+                      onChanged: (val) =>
+                          setState(() => _selectedCategory = val!),
+                    ),
+                    const SizedBox(height: 16),
+                  ],  
                   TextFormField(
                     controller: _descriptionController,
                     maxLines: 3,
