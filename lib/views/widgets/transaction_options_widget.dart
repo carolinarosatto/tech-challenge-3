@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
@@ -38,7 +39,27 @@ class TransactionOptionsWidget extends StatelessWidget {
   }
 
   void _viewAttachment(BuildContext context) {
-    if (transaction.attachmentUrl == null) return;
+    if (transaction.attachmentBase64 == null && transaction.attachmentUrl == null) return;
+
+    Widget imageWidget;
+
+    if (transaction.attachmentBase64 != null && transaction.attachmentBase64!.isNotEmpty) {
+      final base64String = transaction.attachmentBase64!.contains(',')
+          ? transaction.attachmentBase64!.split(',')[1]
+          : transaction.attachmentBase64!;
+
+      imageWidget = Image.memory(
+        base64Decode(base64String),
+        fit: BoxFit.contain,
+      );
+    } else if (transaction.attachmentUrl != null && transaction.attachmentUrl!.isNotEmpty) {
+      imageWidget = Image.network(
+        transaction.attachmentUrl!,
+        fit: BoxFit.contain,
+      );
+    } else {
+      return;
+    }
 
     showDialog(
       context: context,
@@ -46,7 +67,17 @@ class TransactionOptionsWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.network(transaction.attachmentUrl!, fit: BoxFit.contain),
+            Flexible(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(ctx).size.height * 0.8,
+                  maxWidth: MediaQuery.of(ctx).size.width * 0.9,
+                ),
+                child: SingleChildScrollView(
+                  child: imageWidget,
+                ),
+              ),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: const Text("Fechar"),
@@ -110,8 +141,8 @@ class TransactionOptionsWidget extends StatelessWidget {
               },
             ),
 
-            if (transaction.attachmentUrl != null &&
-                transaction.attachmentUrl!.isNotEmpty)
+            if ((transaction.attachmentBase64 != null && transaction.attachmentBase64!.isNotEmpty) ||
+                (transaction.attachmentUrl != null && transaction.attachmentUrl!.isNotEmpty))
               ListTile(
                 leading: const Icon(Icons.attach_file_outlined),
                 title: const Text('Visualizar anexo'),

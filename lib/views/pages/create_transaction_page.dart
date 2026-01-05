@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
@@ -44,7 +45,8 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   late DateTime _selectedDate;
 
   String? _currentAttachmentUrl;
-  File? _pickedFile;
+  String? _currentAttachmentBase64;
+  Uint8List? _pickedImageBytes;
   final ImagePicker _picker = ImagePicker();
 
   bool get _isEditing => widget.transaction != null;
@@ -62,6 +64,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
       _selectedCategory = t.category;
       _selectedDate = t.createdAt;
       _currentAttachmentUrl = t.attachmentUrl;
+      _currentAttachmentBase64 = t.attachmentBase64;
     } else {
       _selectedType = TransactionType.payment;
       _selectedCategory = TransactionCategory.other;
@@ -75,16 +78,18 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
       imageQuality: 50,
     );
     if (picked != null) {
+      final bytes = await picked.readAsBytes();
       setState(() {
-        _pickedFile = File(picked.path);
+        _pickedImageBytes = bytes;
       });
     }
   }
 
   void _clearAttachment() {
     setState(() {
-      _pickedFile = null;
+      _pickedImageBytes = null;
       _currentAttachmentUrl = null;
+      _currentAttachmentBase64 = null;
     });
   }
 
@@ -117,7 +122,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
   }
 
   Widget _buildAttachmentPreview() {
-    if (_pickedFile != null) {
+    if (_pickedImageBytes != null) {
       return Stack(
         alignment: Alignment.topRight,
         children: [
@@ -126,8 +131,45 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
             width: double.infinity,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              image: DecorationImage(
-                image: FileImage(_pickedFile!),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(
+                _pickedImageBytes!,
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: _clearAttachment,
+            icon: const CircleAvatar(
+              backgroundColor: Colors.white,
+              child: Icon(Icons.close, color: Colors.red),
+            ),
+          ),
+        ],
+      );
+    }
+
+    if (_currentAttachmentBase64 != null && _currentAttachmentBase64!.isNotEmpty) {
+      final base64String = _currentAttachmentBase64!.contains(',')
+          ? _currentAttachmentBase64!.split(',')[1]
+          : _currentAttachmentBase64!;
+
+      return Stack(
+        alignment: Alignment.topRight,
+        children: [
+          Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.memory(
+                base64Decode(base64String),
                 fit: BoxFit.cover,
               ),
             ),
@@ -234,12 +276,12 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
         createdAt: _selectedDate,
         updatedAt: _isEditing ? DateTime.now() : null,
 
-        attachmentUrl: _pickedFile == null ? _currentAttachmentUrl : null,
+        attachmentUrl: _pickedImageBytes == null ? _currentAttachmentUrl : null,
       );
 
       await service.saveTransaction(
         transaction: transactionModel,
-        imageFile: _pickedFile,
+        imageBytes: _pickedImageBytes,
       );
 
       if (mounted) {

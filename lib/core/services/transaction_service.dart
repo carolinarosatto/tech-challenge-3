@@ -1,6 +1,8 @@
-import 'dart:io';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:tech_challenge_3/models/transaction_model.dart';
 
 class TransactionService {
@@ -11,9 +13,9 @@ class TransactionService {
 
   TransactionService({required this.userId});
 
-  CollectionReference get _transactionsRef => 
+  CollectionReference get _transactionsRef =>
       _firestore.collection('users').doc(userId).collection('transactions');
-  
+
   Stream<List<TransactionModel>> getTransactions() {
     return _transactionsRef
         .orderBy('createdAt', descending: true)
@@ -40,13 +42,13 @@ class TransactionService {
 
   Future<void> saveTransaction({
     required TransactionModel transaction,
-    File? imageFile,
+    Uint8List? imageBytes,
   }) async {
     try {
-      String? downloadUrl = transaction.attachmentUrl;
+      String? base64Image;
 
-      if (imageFile != null) {
-        downloadUrl = await _uploadImage(imageFile, transaction.id);
+      if (imageBytes != null) {
+        base64Image = await _compressAndConvertToBase64(imageBytes);
       }
 
       final transactionToSave = TransactionModel(
@@ -59,31 +61,37 @@ class TransactionService {
         amount: transaction.amount,
         createdAt: transaction.createdAt,
         updatedAt: DateTime.now(),
-        attachmentUrl: downloadUrl,
+        attachmentUrl: transaction.attachmentUrl,
+        attachmentBase64: base64Image ?? transaction.attachmentBase64,
       );
 
       await _transactionsRef
           .doc(transactionToSave.id)
           .set(transactionToSave.toMap(), SetOptions(merge: true));
-          
+
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<String> _uploadImage(File file, String transactionId) async {
-  
-    final String fileName = '${transactionId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-    final Reference ref = _storage.ref().child('uploads/$userId/$fileName');
+  Future<String> _compressAndConvertToBase64(Uint8List bytes) async {
+    final compressedBytes = await FlutterImageCompress.compressWithList(
+      bytes,
+      quality: 90,
+      minWidth: 800,
+      minHeight: 600,
+    );
 
-    final UploadTask uploadTask = ref.putFile(file);
-    final TaskSnapshot snapshot = await uploadTask;
-    
-    return await snapshot.ref.getDownloadURL();
+    if (compressedBytes.isEmpty) {
+      throw Exception('Falha ao comprimir imagem');
+    }
+
+    final base64String = base64Encode(compressedBytes);
+    return 'data:image/jpeg;base64,$base64String';
   }
 
   Future<void> deleteTransaction(String transactionId) async {
     await _transactionsRef.doc(transactionId).delete();
-  
+
   }
 }
