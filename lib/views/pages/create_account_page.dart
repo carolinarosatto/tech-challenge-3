@@ -49,7 +49,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           showCloseIcon: true,
         ),
       );
-      Navigator.pushReplacementNamed(context, Routes.login);
+      Navigator.pushNamedAndRemoveUntil(context, Routes.home, (route) => false);
     } else {
       final errorMessage = authProvider.errorMessage;
       if (errorMessage != null) {
