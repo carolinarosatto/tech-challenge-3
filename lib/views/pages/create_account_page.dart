@@ -66,9 +66,11 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: true,
-      appBar: AppBar(
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
         leading: Builder(
           builder: (BuildContext context) {
             return IconButton(
@@ -144,6 +146,7 @@ class _CreateAccountPageState extends State<CreateAccountPage> {
           ),
         ),
       ),
+    ),
     );
   }
 }

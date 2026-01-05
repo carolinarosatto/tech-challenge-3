@@ -329,15 +329,17 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          _isEditing ? "Editar Transação" : "Nova Transação",
-          style: TextStyle(color: AppColors.text100),
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            _isEditing ? "Editar Transação" : "Nova Transação",
+            style: TextStyle(color: AppColors.text100),
+          ),
+          backgroundColor: AppColors.brand500,
         ),
-        backgroundColor: AppColors.brand500,
-      ),
-      body: Stack(
+        body: Stack(
         children: [
           SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -497,6 +499,7 @@ class _CreateTransactionPageState extends State<CreateTransactionPage> {
             ),
         ],
       ),
+    ),
     );
   }
 
