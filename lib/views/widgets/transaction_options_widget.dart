@@ -67,7 +67,17 @@ class TransactionOptionsWidget extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            imageWidget,
+            Flexible(
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(ctx).size.height * 0.8,
+                  maxWidth: MediaQuery.of(ctx).size.width * 0.9,
+                ),
+                child: SingleChildScrollView(
+                  child: imageWidget,
+                ),
+              ),
+            ),
             TextButton(
               onPressed: () => Navigator.pop(ctx),
               child: const Text("Fechar"),
