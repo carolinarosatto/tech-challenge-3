@@ -20,14 +20,24 @@ class TransactionService {
     return _transactionsRef
         .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        final data = doc.data() as Map<String, dynamic>;
+        .map(_mapSnapshot);
+  }
 
-        data['id'] = doc.id;
-        return TransactionModel.fromMap(data);
-      }).toList();
-    });
+  Stream<List<TransactionModel>> getTransactionsPage({required int limit}) {
+    return _transactionsRef
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map(_mapSnapshot);
+  }
+
+  List<TransactionModel> _mapSnapshot(QuerySnapshot snapshot) {
+    return snapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+
+      data['id'] = doc.id;
+      return TransactionModel.fromMap(data);
+    }).toList();
   }
 
   Future<void> saveTransaction({
