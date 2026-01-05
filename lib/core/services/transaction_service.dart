@@ -67,7 +67,7 @@ class TransactionService {
   Future<String> _compressAndConvertToBase64(Uint8List bytes) async {
     final compressedBytes = await FlutterImageCompress.compressWithList(
       bytes,
-      quality: 50,
+      quality: 90,
       minWidth: 800,
       minHeight: 600,
     );
