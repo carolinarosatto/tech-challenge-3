@@ -100,6 +100,8 @@ class TransactionsProvider extends ChangeNotifier {
       .where((t) => t.type.direction == TransactionDirection.expense)
       .fold<double>(0, (sum, t) => sum + t.amount.abs());
 
+  double get balance => totalIncome - totalOutcome;
+
   void addTransaction(TransactionModel transaction) {
     _service.saveTransaction(transaction: transaction);
   }

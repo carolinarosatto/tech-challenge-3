@@ -16,11 +16,40 @@ class TotalSummary extends StatelessWidget {
       (provider) => provider?.totalOutcome ?? 0.0,
     );
 
+    final totalBalance = context.select<TransactionsProvider?, double>(
+      (provider) => provider?.balance ?? 0.0,
+    );
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Row(
+              children: [
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Saldo',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.text200,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      FormatterUtils.formatAmount(totalBalance),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(color: AppColors.text300),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Divider(color: AppColors.border200),
+            const SizedBox(height: 12),
             Row(
               children: [
                 DecoratedBox(
