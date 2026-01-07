@@ -11,7 +11,6 @@ Permite login/cadastro de usuário, visualização de dashboard e gerenciamento 
 - **Firebase Core** — inicialização do Firebase  
 - **Firebase Auth** — autenticação de usuários  
 - **Cloud Firestore** — banco de dados em nuvem  
-- **Firebase Storage** — upload e exibição de anexos  
 - **Provider** — gerenciamento de estado  
 - **Intl** — formatação de valores e datas  
 - **Flutter Localizations** — suporte a português (pt-BR)
@@ -75,7 +74,6 @@ lib/
 O projeto usa Firebase para:
 - **Auth:** login/cadastro de usuários  
 - **Firestore:** armazenamento das transações  
-- **Storage:** upload de anexos  
 
 As configurações do Firebase estão em:
 - `firebase.json`  
@@ -88,12 +86,12 @@ As configurações do Firebase estão em:
 
 ## 🧭 Funcionalidades principais
 
-- [ ] Login e cadastro de usuário (Firebase Auth) (em desenvolvimento)
-- [ ] Dashboard com resumo financeiro (em desenvolvimento)
-- [ ] Listagem de transações (em desenvolvimento)
-- [ ] Criação/edição de transações (em desenvolvimento)
-- [ ] Upload e visualização de anexos (em desenvolvimento)
-- [ ] Filtro e pesquisa de transações (em desenvolvimento)
+- [x] Login e cadastro de usuário (Firebase Auth)
+- [x] Dashboard com resumo financeiro
+- [x] Listagem de transações
+- [x] Criação/edição de transações
+- [x] Upload e visualização de anexos - Usamos base64 no firestore, pois o plano básico não permitiu o uso do storage
+- [x] Filtro e pesquisa de transações
 
 ---
 
