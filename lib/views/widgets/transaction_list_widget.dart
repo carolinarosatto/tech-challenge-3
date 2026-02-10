@@ -87,6 +87,8 @@ class _TransactionListWidgetState extends State<TransactionListWidget> {
             _schedulePageSizeUpdate(provider, constraints.maxHeight);
 
             return ListView.builder(
+              key: const PageStorageKey('transaction_list'),
+              cacheExtent: 500,
               controller: _scrollController,
               physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.only(bottom: _listBottomPadding),

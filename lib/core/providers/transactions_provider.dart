@@ -27,6 +27,11 @@ class TransactionsProvider extends ChangeNotifier {
   DateTime? _pageLoadStartedAt;
   int _pageLoadToken = 0;
   bool _isDisposed = false;
+  
+  List<TransactionModel>? _cachedPagedFilteredTransactions;
+  Map<TransactionCategory, double>? _cachedTotalsByCategory;
+  double? _cachedTotalIncome;
+  double? _cachedTotalOutcome;
 
   TransactionsProvider({required this.userId})
     : _service = TransactionService(userId: userId) {
@@ -44,6 +49,9 @@ class TransactionsProvider extends ChangeNotifier {
     _subscription = _service.getTransactions().listen(
       (items) {
         _allTransactions = items;
+        _cachedTotalsByCategory = null;
+        _cachedTotalIncome = null;
+        _cachedTotalOutcome = null;
         _isLoading = false;
         notifyListeners();
       },
@@ -70,11 +78,16 @@ class TransactionsProvider extends ChangeNotifier {
       List.unmodifiable(_allTransactions);
   List<TransactionModel> get filteredTransactions =>
       List.unmodifiable(_allTransactions.where(_matchesFilters));
-  List<TransactionModel> get pagedFilteredTransactions =>
-      List.unmodifiable(_pagedTransactions.where(_matchesFilters));
+  
+  List<TransactionModel> get pagedFilteredTransactions {
+    _cachedPagedFilteredTransactions ??= List.unmodifiable(_pagedTransactions.where(_matchesFilters));
+    return _cachedPagedFilteredTransactions!;
+  }
 
-  Map<TransactionCategory, double> get totalsByCategory =>
-      _getTotalsByCategory();
+  Map<TransactionCategory, double> get totalsByCategory {
+    _cachedTotalsByCategory ??= _getTotalsByCategory();
+    return _cachedTotalsByCategory!;
+  }
 
   Map<TransactionCategory, double> _getTotalsByCategory() {
     final totals = <TransactionCategory, double>{};
@@ -92,13 +105,19 @@ class TransactionsProvider extends ChangeNotifier {
     return Map.unmodifiable(totals);
   }
 
-  double get totalIncome => _allTransactions
-      .where((t) => t.type.direction == TransactionDirection.income)
-      .fold<double>(0, (sum, t) => sum + t.amount.abs());
+  double get totalIncome {
+    _cachedTotalIncome ??= _allTransactions
+        .where((t) => t.type.direction == TransactionDirection.income)
+        .fold<double>(0, (sum, t) => sum + t.amount.abs());
+    return _cachedTotalIncome!;
+  }
 
-  double get totalOutcome => _allTransactions
-      .where((t) => t.type.direction == TransactionDirection.expense)
-      .fold<double>(0, (sum, t) => sum + t.amount.abs());
+  double get totalOutcome {
+    _cachedTotalOutcome ??= _allTransactions
+        .where((t) => t.type.direction == TransactionDirection.expense)
+        .fold<double>(0, (sum, t) => sum + t.amount.abs());
+    return _cachedTotalOutcome!;
+  }
 
   double get balance => totalIncome - totalOutcome;
 
@@ -112,6 +131,7 @@ class TransactionsProvider extends ChangeNotifier {
 
   void updateFilters(TransactionsFilter filters) {
     _filters = filters;
+    _cachedPagedFilteredTransactions = null;
     _subscribePagedTransactions(reset: true);
     notifyListeners();
   }
@@ -119,6 +139,7 @@ class TransactionsProvider extends ChangeNotifier {
   void clearFilters() {
     if (!_filters.hasFilters) return;
     _filters = TransactionsFilter.empty;
+    _cachedPagedFilteredTransactions = null;
     _subscribePagedTransactions(reset: true);
     notifyListeners();
   }
@@ -165,6 +186,7 @@ class TransactionsProvider extends ChangeNotifier {
         .listen(
           (items) {
             _pagedTransactions = items;
+            _cachedPagedFilteredTransactions = null;
             _hasMore = items.length >= _currentLimit;
             notifyListeners();
             _finishPageLoad(currentToken);
