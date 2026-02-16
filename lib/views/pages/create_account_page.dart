@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/core/providers/auth_provider.dart';
+import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 
 import '../../core/routes.dart';

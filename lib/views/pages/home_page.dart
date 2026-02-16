@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/core/providers/auth_provider.dart';
-import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/core/routes.dart';
+import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
 import 'package:tech_challenge_3/views/pages/transactions_page.dart';
@@ -58,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           if (_currentIndex == 1)
             IconButton(
               onPressed: () {
-                Navigator.pushNamed(context, '/create_transaction');
+                Navigator.pushNamed(context, Routes.createTransaction);
               },
               icon: const Icon(Icons.add, color: AppColors.text100),
               tooltip: 'Nova transação',
@@ -96,7 +97,7 @@ class _HomePageState extends State<HomePage> {
       return FloatingActionButton(
         shape: const CircleBorder(),
         onPressed: () {
-          Navigator.pushNamed(context, '/create_transaction');
+          Navigator.pushNamed(context, Routes.createTransaction);
         },
         child: const Icon(Icons.add),
       );

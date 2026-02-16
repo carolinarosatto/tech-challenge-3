@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
-import 'package:tech_challenge_3/core/widgets/auth_guard.dart';
+import 'package:tech_challenge_3/features/auth/presentation/widgets/auth_guard.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/outcome_by_category_chart.dart';
 import 'package:tech_challenge_3/views/widgets/dashboard/total_summary.dart';
 

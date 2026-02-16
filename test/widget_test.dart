@@ -1,30 +1,81 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/core/errors/failure.dart';
+import 'package:tech_challenge_3/core/result/result.dart';
+import 'package:tech_challenge_3/features/auth/presentation/widgets/auth_guard.dart';
+import 'package:tech_challenge_3/features/auth/domain/entities/auth_user_entity.dart';
+import 'package:tech_challenge_3/features/auth/domain/repositories/auth_repository.dart';
+import 'package:tech_challenge_3/features/auth/domain/usecases/login_usecase.dart';
+import 'package:tech_challenge_3/features/auth/domain/usecases/logout_usecase.dart';
+import 'package:tech_challenge_3/features/auth/domain/usecases/register_usecase.dart';
+import 'package:tech_challenge_3/features/auth/domain/usecases/watch_auth_state_usecase.dart';
+import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 
-import 'package:tech_challenge_3/main.dart';
+class _FakeAuthRepository implements AuthRepository {
+  final StreamController<AuthUserEntity?> _controller =
+      StreamController<AuthUserEntity?>.broadcast();
+
+  @override
+  Future<Result<AuthUserEntity>> login({
+    required String email,
+    required String password,
+  }) async {
+    return const FailureResult(AuthFailure(message: 'not used'));
+  }
+
+  @override
+  Future<Result<void>> logout() async {
+    return const Success<void>(null);
+  }
+
+  @override
+  Future<Result<AuthUserEntity>> register({
+    required String email,
+    required String password,
+  }) async {
+    return const FailureResult(AuthFailure(message: 'not used'));
+  }
+
+  @override
+  Stream<AuthUserEntity?> watchAuthState() => _controller.stream;
+
+  void emit(AuthUserEntity? user) => _controller.add(user);
+
+  Future<void> dispose() async {
+    await _controller.close();
+  }
+}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('AuthGuard renders child when user is authenticated', (
+    WidgetTester tester,
+  ) async {
+    final repository = _FakeAuthRepository();
+    final provider = AuthProvider(
+      loginUseCase: LoginUseCase(repository),
+      registerUseCase: RegisterUseCase(repository),
+      logoutUseCase: LogoutUseCase(repository),
+      watchAuthStateUseCase: WatchAuthStateUseCase(repository),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      ChangeNotifierProvider<AuthProvider>.value(
+        value: provider,
+        child: const MaterialApp(
+          home: AuthGuard(child: Text('Protected content')),
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+    repository.emit(const AuthUserEntity(uid: 'uid-1', email: 'user@mail.com'));
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Protected content'), findsOneWidget);
+
+    provider.dispose();
+    await repository.dispose();
   });
 }

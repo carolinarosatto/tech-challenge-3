@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tech_challenge_3/core/widgets/auth_guard.dart';
+import 'package:tech_challenge_3/features/auth/presentation/widgets/auth_guard.dart';
 import 'package:tech_challenge_3/views/widgets/transaction_list_widget.dart';
 
 class TransactionsPage extends StatelessWidget {
