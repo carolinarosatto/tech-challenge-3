@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
 

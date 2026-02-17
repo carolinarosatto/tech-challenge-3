@@ -20,7 +20,7 @@ class _CategoryLegendItem extends StatelessWidget {
           width: 14,
           height: 14,
           decoration: BoxDecoration(
-            color: category.colors,
+            color: category.color,
             borderRadius: BorderRadius.circular(4),
           ),
         ),

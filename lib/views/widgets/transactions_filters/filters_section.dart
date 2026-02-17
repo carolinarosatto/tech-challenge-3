@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-typedef FiltersChipBuilder<T> = Widget Function(
-  BuildContext context,
-  T option,
-  bool isSelected,
-  ValueChanged<bool> onSelected,
-);
+typedef FiltersChipBuilder<T> =
+    Widget Function(
+      BuildContext context,
+      T option,
+      bool isSelected,
+      ValueChanged<bool> onSelected,
+    );
 
 class FiltersSection<T> extends StatelessWidget {
   final String title;

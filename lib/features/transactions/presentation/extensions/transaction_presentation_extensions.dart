@@ -1,19 +1,38 @@
 import 'package:flutter/material.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
+import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
 
-enum TransactionCategory {
-  food,
-  transport,
-  habitation,
-  leisure,
-  health,
-  education,
-  pets,
-  deposit,
-  other,
+extension TransactionTypePresentation on TransactionType {
+  String get label {
+    switch (this) {
+      case TransactionType.deposit:
+        return 'Depósito';
+      case TransactionType.withdrawal:
+        return 'Saque';
+      case TransactionType.investment:
+        return 'Investimento';
+      case TransactionType.income:
+        return 'Rendimento';
+      case TransactionType.payment:
+        return 'Pagamento';
+      case TransactionType.transfer:
+        return 'Transferência';
+    }
+  }
 }
 
-extension TransactionCategoryExtension on TransactionCategory {
+extension TransactionDirectionPresentation on TransactionDirection {
+  String get label {
+    switch (this) {
+      case TransactionDirection.income:
+        return 'Entradas';
+      case TransactionDirection.expense:
+        return 'Saídas';
+    }
+  }
+}
+
+extension TransactionCategoryPresentation on TransactionCategory {
   String get label {
     switch (this) {
       case TransactionCategory.food:
@@ -30,10 +49,10 @@ extension TransactionCategoryExtension on TransactionCategory {
         return 'Educação';
       case TransactionCategory.pets:
         return 'Pets';
-      case TransactionCategory.other:
-        return 'Outros';
       case TransactionCategory.deposit:
         return 'Depósito';
+      case TransactionCategory.other:
+        return 'Outros';
     }
   }
 
@@ -53,14 +72,14 @@ extension TransactionCategoryExtension on TransactionCategory {
         return Icons.school_outlined;
       case TransactionCategory.pets:
         return Icons.pets_outlined;
-      case TransactionCategory.other:
-        return Icons.receipt_outlined;
       case TransactionCategory.deposit:
         return Icons.attach_money_sharp;
+      case TransactionCategory.other:
+        return Icons.receipt_outlined;
     }
   }
 
-  Color get colors {
+  Color get color {
     switch (this) {
       case TransactionCategory.food:
         return AppColors.categoryFood;
@@ -76,17 +95,10 @@ extension TransactionCategoryExtension on TransactionCategory {
         return AppColors.categoryEducation;
       case TransactionCategory.pets:
         return AppColors.categoryPets;
-      case TransactionCategory.other:
-        return AppColors.categoryOther;
       case TransactionCategory.deposit:
         return AppColors.stateSuccess;
+      case TransactionCategory.other:
+        return AppColors.categoryOther;
     }
-  }
-
-  static TransactionCategory fromString(String value) {
-    return TransactionCategory.values.firstWhere(
-      (e) => e.name == value,
-      orElse: () => TransactionCategory.other,
-    );
   }
 }

@@ -3,7 +3,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/core/theme/typography.dart';
 import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
-import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
+import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/extensions/transaction_presentation_extensions.dart';
 part 'package:tech_challenge_3/views/widgets/dashboard/dashboard_category_legend_item.dart';
 
 class OutcomeByCategoryChart extends StatelessWidget {
@@ -101,7 +102,7 @@ class OutcomeByCategoryChart extends StatelessWidget {
     final showLabel = percentage >= 6;
 
     return PieChartSectionData(
-      color: entry.key.colors,
+      color: entry.key.color,
       value: entry.value,
       title: showLabel ? entry.key.label : '',
       radius: 90,

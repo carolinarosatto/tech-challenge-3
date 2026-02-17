@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
-import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
-import 'package:tech_challenge_3/models/enums/transaction_type.dart';
-import 'package:tech_challenge_3/models/transactions_filter.dart';
+import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
+import 'package:tech_challenge_3/features/transactions/domain/entities/transactions_filter_entity.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/extensions/transaction_presentation_extensions.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_section.dart';
 
 class TransactionsFiltersSheet extends StatefulWidget {
@@ -35,22 +35,24 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
   void initState() {
     super.initState();
     final provider = context.read<TransactionsProvider?>();
-    if (provider != null) {
-      final filters = provider.filters;
-      _selectedTypes = {...filters.types};
-      _selectedCategories = {...filters.categories};
-      _selectedDirection = filters.direction;
-    } else {
+    if (provider == null) {
       _selectedTypes = {};
       _selectedCategories = {};
       _selectedDirection = null;
+      return;
     }
+
+    final filters = provider.filters;
+    _selectedTypes = {...filters.types};
+    _selectedCategories = {...filters.categories};
+    _selectedDirection = filters.direction;
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final textTheme = theme.textTheme;
+
     final sectionTitleStyle = textTheme.titleSmall?.copyWith(
       color: AppColors.text200,
       fontWeight: FontWeight.w600,
@@ -106,12 +108,9 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
                           });
                         },
                         chipBuilder: (context, option, isSelected, onSelected) {
-                          final label = option == TransactionDirection.income
-                              ? 'Entradas'
-                              : 'Saídas';
                           return ChoiceChip(
                             label: Text(
-                              label,
+                              option.label,
                               style: isSelected
                                   ? chipSelectedTextStyle
                                   : chipTextStyle,
@@ -169,10 +168,10 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
                         },
                         chipBuilder:
                             (context, category, isSelected, onSelected) {
-                              final Color selectedColor =
+                              final selectedColor =
                                   category == TransactionCategory.other
                                   ? AppColors.border400
-                                  : category.colors;
+                                  : category.color;
                               return FilterChip(
                                 avatar: Icon(
                                   category.icon,
@@ -228,25 +227,27 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
     if (provider != null) {
       provider.clearFilters();
       Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).pop();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Não foi possível limpar os filtros'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      return;
     }
+
+    Navigator.of(context).pop();
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível limpar os filtros'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 
   void _onApplyFilters() {
     final provider = context.read<TransactionsProvider?>();
 
     if (provider != null) {
-      final filters = TransactionsFilter(
+      final filters = TransactionsFilterEntity(
         direction: _selectedDirection,
         types: Set<TransactionType>.from(_selectedTypes),
         categories: Set<TransactionCategory>.from(_selectedCategories),
@@ -254,17 +255,19 @@ class _TransactionsFiltersSheetState extends State<TransactionsFiltersSheet> {
 
       provider.updateFilters(filters);
       Navigator.of(context).pop();
-    } else {
-      Navigator.of(context).pop();
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Não foi possível aplicar os filtros'),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      return;
     }
+
+    Navigator.of(context).pop();
+    if (!mounted) {
+      return;
+    }
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Não foi possível aplicar os filtros'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
 }

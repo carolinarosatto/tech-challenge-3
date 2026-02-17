@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
-import 'package:tech_challenge_3/models/enums/transaction_categories.dart';
-import 'package:tech_challenge_3/models/enums/transaction_type.dart';
-import 'package:tech_challenge_3/models/transaction_model.dart';
+import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
+import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/extensions/transaction_presentation_extensions.dart';
 import 'package:tech_challenge_3/views/widgets/transaction_options_widget.dart';
 
 class TransactionWidget extends StatelessWidget {
-  final TransactionModel transaction;
   const TransactionWidget({super.key, required this.transaction});
+
+  final TransactionEntity transaction;
 
   void _showTransactionOptions(
     BuildContext context,
-    TransactionModel transaction,
+    TransactionEntity transaction,
   ) {
     showModalBottomSheet(
       context: context,
@@ -26,6 +27,9 @@ class TransactionWidget extends StatelessWidget {
         transaction.type.direction == TransactionDirection.expense
         ? AppColors.stateError
         : AppColors.stateSuccess;
+    final hasAttachment =
+        (transaction.attachmentBase64?.isNotEmpty ?? false) ||
+        (transaction.attachmentUrl?.isNotEmpty ?? false);
 
     return InkWell(
       onTap: () => _showTransactionOptions(context, transaction),
@@ -40,14 +44,12 @@ class TransactionWidget extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(14),
                 decoration: BoxDecoration(
-                  color: category.colors,
+                  color: category.color,
                   borderRadius: BorderRadius.circular(100),
                 ),
                 child: Icon(category.icon, color: AppColors.text100, size: 28),
               ),
-
               const SizedBox(width: 16),
-
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -59,35 +61,31 @@ class TransactionWidget extends StatelessWidget {
                           transaction.title,
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
-                        if (transaction.attachmentUrl != null &&
-                            transaction.attachmentUrl!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
+                        if (hasAttachment)
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8),
                             child: Icon(Icons.attach_file_outlined, size: 18),
                           ),
                       ],
                     ),
-
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
                       transaction.description,
                       style: Theme.of(
                         context,
                       ).textTheme.bodySmall?.copyWith(color: AppColors.text200),
                     ),
-                    SizedBox(height: 4),
+                    const SizedBox(height: 4),
                     Text(
-                      transaction.formattedCreatedAt,
+                      FormatterUtils.formatDate(transaction.createdAt),
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                   ],
                 ),
               ),
-
               const SizedBox(width: 12),
-
               Text(
-                transaction.formattedAmount,
+                FormatterUtils.formatAmount(transaction.amount),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: amountColor,
