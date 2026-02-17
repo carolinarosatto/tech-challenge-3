@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tech_challenge_3/core/di/container_registry.dart';
+import 'package:tech_challenge_3/app/di/container_registry.dart';
 import 'package:tech_challenge_3/core/theme/theme.dart';
 import 'package:tech_challenge_3/firebase_options.dart';
 import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';

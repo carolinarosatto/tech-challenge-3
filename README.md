@@ -65,9 +65,12 @@ O projeto está organizado em estrutura **feature-first** com separação por ca
 ```text
 lib/
  ├─ core/
- │   ├─ di/                → composição de dependências (ContainerRegistry)
  │   ├─ errors/            → falhas e mapeamento de mensagens
  │   └─ result/            → Result<T> (success/failure)
+ ├─ app/
+ │   ├─ di/                → composição de dependências (ContainerRegistry)
+ │   ├─ navigation/        → roteador da aplicação (AppRouter)
+ │   └─ presentation/      → shell de navegação entre features
  ├─ features/
  │   ├─ auth/
  │   │   ├─ domain/        → entidades, repositórios, use cases
@@ -77,9 +80,6 @@ lib/
  │       ├─ domain/        → entidades, filtros, repositórios, use cases
  │       ├─ data/          → datasource Firestore, mapper, repository impl
  │       └─ presentation/  → providers, páginas e widgets de transações
- ├─ app/
- │   ├─ navigation/        → roteador da aplicação (AppRouter)
- │   └─ presentation/      → shell de navegação entre features
  └─ main.dart              → bootstrap Firebase + Providers
 ```
 

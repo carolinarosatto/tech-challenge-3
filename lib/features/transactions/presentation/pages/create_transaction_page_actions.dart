@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_form_controller.dart';
 
@@ -102,20 +101,15 @@ class CreateTransactionPageActions {
       return;
     }
 
-    final authProvider = context.read<AuthProvider>();
     final transactionsProvider = context.read<TransactionsProvider?>();
     final navigator = Navigator.of(context);
-    final userId = authProvider.user?.uid;
-
-    if (userId == null) {
-      showMessage('Erro: Usuário não autenticado', isError: true);
-      return;
-    }
 
     if (transactionsProvider == null) {
       showMessage('Erro: Provider de transações não disponível', isError: true);
       return;
     }
+
+    final userId = transactionsProvider.userId;
 
     setState(() => form.isLoading = true);
 
