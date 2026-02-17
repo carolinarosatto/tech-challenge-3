@@ -5,7 +5,7 @@ import 'package:tech_challenge_3/core/theme/colors.dart';
 
 import '../../core/routes.dart';
 import '../../core/utils/validators.dart';
-import '../../core/widgets/password_input.dart';
+import '../widgets/password_input.dart';
 
 class CreateAccountPage extends StatefulWidget {
   const CreateAccountPage({super.key});
