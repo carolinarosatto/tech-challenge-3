@@ -8,9 +8,9 @@ import 'package:tech_challenge_3/core/theme/theme.dart';
 import 'package:tech_challenge_3/firebase_options.dart';
 import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/views/navigation/app_router.dart';
-import 'package:tech_challenge_3/views/pages/home_page.dart';
-import 'package:tech_challenge_3/views/pages/login_page.dart';
+import 'package:tech_challenge_3/app/navigation/app_router.dart';
+import 'package:tech_challenge_3/app/presentation/pages/home_page.dart';
+import 'package:tech_challenge_3/features/auth/presentation/pages/login_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

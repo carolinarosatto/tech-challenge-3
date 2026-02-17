@@ -3,7 +3,7 @@ import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/core/utils/formatter_utils.dart';
 import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/extensions/transaction_presentation_extensions.dart';
-import 'package:tech_challenge_3/views/widgets/transaction_options_widget.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/list/transaction_options_widget.dart';
 
 class TransactionWidget extends StatelessWidget {
   const TransactionWidget({super.key, required this.transaction});

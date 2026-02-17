@@ -5,7 +5,7 @@ import 'package:tech_challenge_3/features/transactions/domain/entities/transacti
 import 'package:tech_challenge_3/features/transactions/domain/entities/transactions_filter_entity.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/extensions/transaction_presentation_extensions.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_section.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/filters/filters_section.dart';
 
 class TransactionsFiltersSheet extends StatefulWidget {
   const TransactionsFiltersSheet({super.key});

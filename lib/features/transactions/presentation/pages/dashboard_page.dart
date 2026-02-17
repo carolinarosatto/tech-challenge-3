@@ -3,8 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/features/auth/presentation/widgets/auth_guard.dart';
-import 'package:tech_challenge_3/views/widgets/dashboard/outcome_by_category_chart.dart';
-import 'package:tech_challenge_3/views/widgets/dashboard/total_summary.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/dashboard/outcome_by_category_chart.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/dashboard/total_summary.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});

@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/views/pages/create_transaction_page.dart';
-import 'package:tech_challenge_3/views/widgets/empty_transactions.dart';
-import 'package:tech_challenge_3/views/widgets/transaction_widget.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_filters/filter_not_found.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_page.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/list/empty_transactions.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/list/transaction_widget.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/filters/filter_not_found.dart';
 
 class TransactionListWidget extends StatefulWidget {
   const TransactionListWidget({super.key});

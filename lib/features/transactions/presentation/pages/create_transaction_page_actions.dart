@@ -3,7 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/views/pages/create_transaction_form_controller.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_form_controller.dart';
 
 typedef SetStateCallback = void Function(VoidCallback fn);
 typedef IsMountedCallback = bool Function();

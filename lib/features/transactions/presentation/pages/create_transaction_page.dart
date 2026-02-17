@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
-import 'package:tech_challenge_3/views/pages/create_transaction_form_controller.dart';
-import 'package:tech_challenge_3/views/pages/create_transaction_page_actions.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_form/attachment_preview.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_form/transaction_form_fields.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_form_controller.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_page_actions.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/forms/attachment_preview.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/forms/transaction_form_fields.dart';
 
 class CreateTransactionPage extends StatefulWidget {
   const CreateTransactionPage({super.key, this.transaction});

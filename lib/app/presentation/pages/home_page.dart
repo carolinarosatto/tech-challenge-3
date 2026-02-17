@@ -4,10 +4,10 @@ import 'package:tech_challenge_3/core/routes.dart';
 import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
-import 'package:tech_challenge_3/views/pages/dashboard_page.dart';
-import 'package:tech_challenge_3/views/pages/transactions_page.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_filters/filters_indicator.dart';
-import 'package:tech_challenge_3/views/widgets/transactions_filters/transactions_filters_sheet.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/dashboard_page.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/transactions_page.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/filters/filters_indicator.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/filters/transactions_filters_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

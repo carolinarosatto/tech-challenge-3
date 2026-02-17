@@ -72,12 +72,14 @@ lib/
  │   ├─ auth/
  │   │   ├─ domain/        → entidades, repositórios, use cases
  │   │   ├─ data/          → datasource Firebase Auth + repository impl
- │   │   └─ presentation/  → provider de autenticação
+ │   │   └─ presentation/  → providers, páginas e widgets de autenticação
  │   └─ transactions/
  │       ├─ domain/        → entidades, filtros, repositórios, use cases
  │       ├─ data/          → datasource Firestore, mapper, repository impl
- │       └─ presentation/  → provider e extensões de UI
- ├─ views/                 → páginas e widgets (apresentação)
+ │       └─ presentation/  → providers, páginas e widgets de transações
+ ├─ app/
+ │   ├─ navigation/        → roteador da aplicação (AppRouter)
+ │   └─ presentation/      → shell de navegação entre features
  └─ main.dart              → bootstrap Firebase + Providers
 ```
 

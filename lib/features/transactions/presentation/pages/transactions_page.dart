@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tech_challenge_3/features/auth/presentation/widgets/auth_guard.dart';
-import 'package:tech_challenge_3/views/widgets/transaction_list_widget.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/list/transaction_list_widget.dart';
 
 class TransactionsPage extends StatelessWidget {
   const TransactionsPage({super.key});

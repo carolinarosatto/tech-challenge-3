@@ -5,7 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:tech_challenge_3/core/theme/colors.dart';
 import 'package:tech_challenge_3/features/transactions/domain/entities/transaction_entity.dart';
 import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
-import 'package:tech_challenge_3/views/pages/create_transaction_page.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/pages/create_transaction_page.dart';
 
 class TransactionOptionsWidget extends StatelessWidget {
   const TransactionOptionsWidget({super.key, required this.transaction});
