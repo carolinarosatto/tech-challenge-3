@@ -85,15 +85,6 @@ lib/
 
 ---
 
-### Regras de dependência
-
-- `presentation` depende de `domain` (use cases), nunca de datasource/SDK.
-- `data` implementa contratos de `domain` e concentra acesso ao Firebase.
-- `core` contém recursos compartilhados de infraestrutura transversal.
-- `core` não deve importar `features/**/presentation/**`.
-- Firebase SDK aparece apenas no bootstrap (`main.dart`) e na camada `data`.
-- Não use `core/services` e `core/providers` (legado removido da arquitetura atual).
-
 ## 🔐 Firebase
 
 O projeto usa Firebase para:
