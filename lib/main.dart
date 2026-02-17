@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:tech_challenge_3/core/providers/auth_provider.dart';
-import 'package:tech_challenge_3/core/providers/transactions_provider.dart';
+import 'package:tech_challenge_3/core/di/container_registry.dart';
 import 'package:tech_challenge_3/core/routes.dart';
 import 'package:tech_challenge_3/core/theme/theme.dart';
 import 'package:tech_challenge_3/firebase_options.dart';
+import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/providers/transactions_provider.dart';
 import 'package:tech_challenge_3/views/pages/home_page.dart';
 import 'package:tech_challenge_3/views/pages/login_page.dart';
 
@@ -29,7 +30,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(
+            loginUseCase: ContainerRegistry.loginUseCase,
+            registerUseCase: ContainerRegistry.registerUseCase,
+            logoutUseCase: ContainerRegistry.logoutUseCase,
+            watchAuthStateUseCase: ContainerRegistry.watchAuthStateUseCase,
+          ),
+        ),
         ChangeNotifierProxyProvider<AuthProvider, TransactionsProvider?>(
           create: (context) => null,
           update: (context, authProvider, previous) {
@@ -37,7 +45,19 @@ class MyApp extends StatelessWidget {
               return null;
             }
             if (previous == null || previous.userId != authProvider.user!.uid) {
-              return TransactionsProvider(userId: authProvider.user!.uid);
+              return TransactionsProvider(
+                userId: authProvider.user!.uid,
+                watchTransactionsUseCase:
+                    ContainerRegistry.watchTransactionsUseCase,
+                watchTransactionsPageUseCase:
+                    ContainerRegistry.watchTransactionsPageUseCase,
+                saveTransactionUseCase:
+                    ContainerRegistry.saveTransactionUseCase,
+                deleteTransactionUseCase:
+                    ContainerRegistry.deleteTransactionUseCase,
+                calculateTotalsUseCase:
+                    ContainerRegistry.calculateTotalsUseCase,
+              );
             }
             return previous;
           },
