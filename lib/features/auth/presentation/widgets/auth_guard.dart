@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tech_challenge_3/features/auth/presentation/pages/login_page.dart';
 import 'package:tech_challenge_3/features/auth/presentation/providers/auth_provider.dart';
 
 class AuthGuard extends StatelessWidget {
@@ -18,9 +19,7 @@ class AuthGuard extends StatelessWidget {
         }
 
         if (!authProvider.isAuthenticated) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const LoginPage();
         }
 
         return child;

@@ -95,18 +95,24 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    _setLoading(true);
+    _isLoading = true;
+    _clearError();
+    notifyListeners();
 
     final result = await _logoutUseCase.execute();
 
     result.fold(
-      onSuccess: (_) {},
+      onSuccess: (_) {
+        _user = null;
+        _status = AuthStatus.unauthenticated;
+      },
       onFailure: (failure) {
         _setError(ErrorHandler.toMessage(failure));
       },
     );
 
-    _setLoading(false);
+    _isLoading = false;
+    notifyListeners();
   }
 
   void _setLoading(bool value) {
