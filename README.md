@@ -7,12 +7,12 @@ Permite login/cadastro de usuário, visualização de dashboard e gerenciamento 
 
 ## 🚀 Tecnologias
 
-- **Flutter** — framework principal  
-- **Firebase Core** — inicialização do Firebase  
-- **Firebase Auth** — autenticação de usuários  
-- **Cloud Firestore** — banco de dados em nuvem  
-- **Provider** — gerenciamento de estado  
-- **Intl** — formatação de valores e datas  
+- **Flutter** — framework principal
+- **Firebase Core** — inicialização do Firebase
+- **Firebase Auth** — autenticação de usuários
+- **Cloud Firestore** — banco de dados em nuvem
+- **Provider** — gerenciamento de estado
+- **Intl** — formatação de valores e datas
 - **Flutter Localizations** — suporte a português (pt-BR)
 
 ---
@@ -31,12 +31,14 @@ Antes de rodar o projeto, garanta que você tem instalado:
 ## 🧠 Configuração inicial
 
 1. **Clone o repositório:**
+
    ```bash
    git clone https://github.com/seu-usuario/nome-do-repo.git
    cd nome-do-repo
    ```
 
 2. **Instale as dependências:**
+
    ```bash
    flutter pub get
    ```
@@ -44,6 +46,7 @@ Antes de rodar o projeto, garanta que você tem instalado:
 3. **Verifique se o Firebase está configurado:**
    O arquivo `lib/firebase_options.dart` já está incluído no projeto.  
    Caso precise gerar novamente:
+
    ```bash
    flutterfire configure
    ```
@@ -55,28 +58,43 @@ Antes de rodar o projeto, garanta que você tem instalado:
 
 ---
 
-<!-- ## 🧱 Estrutura principal do projeto
+## 🧱 Arquitetura (Clean Architecture)
 
-```
+O projeto está organizado em estrutura **feature-first** com separação por camadas:
+
+```text
 lib/
  ├─ core/
- │   └─ theme/          → Cores, fontes e estilos globais
- ├─ models/             → Modelos de dados (ex: TransactionModel)
- ├─ pages/              → Telas principais (login, home, cadastro, etc.)
- ├─ widgets/            → Componentes reutilizáveis
- └─ main.dart           → Ponto de entrada do app
+ │   ├─ errors/            → falhas e mapeamento de mensagens
+ │   └─ result/            → Result<T> (success/failure)
+ ├─ app/
+ │   ├─ di/                → composição de dependências (ContainerRegistry)
+ │   ├─ navigation/        → roteador da aplicação (AppRouter)
+ │   └─ presentation/      → shell de navegação entre features
+ ├─ features/
+ │   ├─ auth/
+ │   │   ├─ domain/        → entidades, repositórios, use cases
+ │   │   ├─ data/          → datasource Firebase Auth + repository impl
+ │   │   └─ presentation/  → providers, páginas e widgets de autenticação
+ │   └─ transactions/
+ │       ├─ domain/        → entidades, filtros, repositórios, use cases
+ │       ├─ data/          → datasource Firestore, mapper, repository impl
+ │       └─ presentation/  → providers, páginas e widgets de transações
+ └─ main.dart              → bootstrap Firebase + Providers
 ```
 
---- -->
+---
 
 ## 🔐 Firebase
 
 O projeto usa Firebase para:
-- **Auth:** login/cadastro de usuários  
-- **Firestore:** armazenamento das transações  
+
+- **Auth:** login/cadastro de usuários
+- **Firestore:** armazenamento das transações
 
 As configurações do Firebase estão em:
-- `firebase.json`  
+
+- `firebase.json`
 - `lib/firebase_options.dart`
 
 > ⚠️ Obs: este projeto acadêmico inclui chaves de configuração públicas do Firebase para facilitar a execução local.  
@@ -94,7 +112,6 @@ As configurações do Firebase estão em:
 - [x] Filtro e pesquisa de transações
 
 ---
-
 
 ## 📝 Licença
 

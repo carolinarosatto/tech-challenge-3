@@ -1,0 +1,16 @@
+import 'package:flutter/material.dart';
+import 'package:tech_challenge_3/features/transactions/presentation/widgets/list/transaction_list_widget.dart';
+
+class TransactionsPage extends StatelessWidget {
+  const TransactionsPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const SafeArea(
+      child: Padding(
+        padding: EdgeInsets.only(top: 8.0),
+        child: TransactionListWidget(),
+      ),
+    );
+  }
+}
